@@ -32,53 +32,78 @@ module AcaRadar
       !HTTP_ERROR.keys.include?(result.code)
     end
 
-    def parse_arxiv_atom(xml_str)
-      doc = REXML::Document.new(xml_str)
+    def parse_xml(xml_str)
+      REXML::Document.new(xml_str)
+    end
 
-      total_results = REXML::XPath.first(doc, '//opensearch:totalResults')&.text&.to_i
-      start_index   = REXML::XPath.first(doc, '//opensearch:startIndex')&.text&.to_i
-      items_per_pg  = REXML::XPath.first(doc, '//opensearch:itemsPerPage')&.text&.to_i
+    # Extracts pagination metadata from the XML document
+    def extract_pagination_metadata(doc)
+      {
+        'total_results' => REXML::XPath.first(doc, '//opensearch:totalResults')&.text&.to_i,
+        'start_index' => REXML::XPath.first(doc, '//opensearch:startIndex')&.text&.to_i,
+        'items_per_page' => REXML::XPath.first(doc, '//opensearch:itemsPerPage')&.text&.to_i
+      }.compact
+    end
 
-      entries = []
-      REXML::XPath.each(doc, '//entry') do |e|
-        title     = e.elements['title']&.text&.strip
-        summary   = e.elements['summary']&.text&.strip
-        published = e.elements['published']&.text&.strip
-        updated   = e.elements['updated']&.text&.strip
-        id        = e.elements['id']&.text&.strip
+    # Extracts basic fields (id, title, summary, published, updated) from an entry
+    def extract_entry_fields(entry)
+      {
+        'id' => entry.elements['id']&.text&.strip,
+        'title' => entry.elements['title']&.text&.strip,
+        'summary' => entry.elements['summary']&.text&.strip,
+        'published' => entry.elements['published']&.text&.strip,
+        'updated' => entry.elements['updated']&.text&.strip
+      }.compact
+    end
 
-        authors = e.get_elements('author/name').map { |n| n.text.to_s.strip }.uniq
-        cats    = e.get_elements('category').map { |c| c.attributes['term'] }.compact.uniq
-        pcat    = e.elements['arxiv:primary_category']&.attributes&.[]('term')
+    # Extracts authors from an entry
+    def extract_authors(entry)
+      entry.get_elements('author/name').map { |n| n.text.to_s.strip }.uniq
+    end
 
-        links = e.get_elements('link').map do |l|
-          {
-            'rel'   => l.attributes['rel'],
-            'type'  => l.attributes['type'],
-            'href'  => l.attributes['href'],
-            'title' => l.attributes['title']
-          }.compact
-        end
+    # Extracts categories and primary category from an entry
+    def extract_categories(entry)
+      {
+        'categories' => entry.get_elements('category').map { |c| c.attributes['term'] }.compact.uniq,
+        'primary_category' => entry.elements['arxiv:primary_category']&.attributes&.[]('term')
+      }.compact
+    end
 
-        entries << {
-          'id'  => id,
-          'title' => title,
-          'summary' => summary,
-          'published' => published,
-          'updated' => updated,
-          'authors' => authors,
-          'categories' => cats,
-          'primary_category' => pcat,
-          'links' => links
+    # Extracts links from an entry
+    def extract_links(entry)
+      entry.get_elements('link').map do |l|
+        {
+          'rel' => l.attributes['rel'],
+          'type' => l.attributes['type'],
+          'href' => l.attributes['href'],
+          'title' => l.attributes['title']
         }.compact
       end
+    end
 
-      {
-        'total_results' => total_results,
-        'start_index' => start_index,
-        'items_per_page' => items_per_pg,
-        'entries' => entries
-      }.compact
+    # Parses a single entry into a hash
+    def parse_entry(entry)
+      entry_fields = extract_entry_fields(entry)
+      authors = extract_authors(entry)
+      categories = extract_categories(entry)
+      links = extract_links(entry)
+
+      entry_fields.merge(
+        'authors' => authors,
+        'categories' => categories['categories'],
+        'primary_category' => categories['primary_category'],
+        'links' => links
+      ).compact
+    end
+
+    # Main function to parse the arXiv ATOM feed
+    def parse_arxiv_atom(xml_str)
+      doc = parse_xml(xml_str)
+      pagination_metadata = extract_pagination_metadata(doc)
+
+      entries = REXML::XPath.each(doc, '//entry').map { |entry| parse_entry(entry) }
+
+      pagination_metadata.merge('entries' => entries).compact
     end
   end
 end
