@@ -6,6 +6,7 @@ require 'yaml'
 
 require_relative '../helper/arxiv_api_parser'
 require_relative '../lib/arxiv_api'
+require_relative '../lib/query.rb'
 require_relative 'spec_helper'
 
 # rubocop:disable Metrics/BlockLength
@@ -27,15 +28,15 @@ describe 'Test arXiv API library' do
 
   describe 'Excerpts Information' do
     it 'HAPPY: should provide correct paper attributes' do
-      excerpts = AcaRadar::ArXivApi.new.excerpts
-      _(excerpts.title).must_equal CORRECT['entries'][0]['title']
-      _(excerpts.summary).must_equal CORRECT['entries'][0]['summary']
+      paper = AcaRadar::ArXivApi.new.call(Query).papers[0]
+      _(paper.title).must_equal CORRECT['entries'][0]['title']
+      _(paper.title).must_equal CORRECT['entries'][0]['summary']
     end
   end
 
   describe 'Categories Information' do
     it 'HAPPY: should provide correct categories attributes' do
-      categories = AcaRadar::ArXivApi.new.categories
+      categories = AcaRadar::ArXivApi.new.call(Query).papers[0].categories
       _(categories.primary_category).must_equal CORRECT['entries'][0]['primary_category']
       _(categories.all_categories).must_equal CORRECT['entries'][0]['categories']
     end
@@ -43,7 +44,7 @@ describe 'Test arXiv API library' do
 
   describe 'Publications Information' do
     it 'HAPPY: should provide correct publication attributes' do
-      publications = AcaRadar::ArXivApi.new.publications
+      publications = AcaRadar::ArXivApi.new.call(Query).papers[0]
       _(publications.links).must_equal CORRECT['entries'][0]['links']
       _(publications.published).must_equal CORRECT['entries'][0]['published']
       _(publications.updated).must_equal CORRECT['entries'][0]['updated']
@@ -52,9 +53,8 @@ describe 'Test arXiv API library' do
 
   describe 'Authors Information' do
     it 'HAPPY: should provide correct author attributes' do
-      authors = AcaRadar::ArXivApi.new.authors
-      _(authors.id).must_equal CORRECT['entries'][0]['id']
-      _(authors.authors).must_equal CORRECT['entries'][0]['authors']
+      authors = AcaRadar::ArXivApi.new.call(Query).papers[0].authors
+      _(authors).must_equal CORRECT['entries'][0]['authors']
     end
   end
 end
