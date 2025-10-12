@@ -21,6 +21,7 @@ module AcaRadar
   # Library for arXiv Web API
   class ArXivApi
     include ArXivConfig
+
     def initialize(config_path = 'config/secrets.yml')
       @config = YAML.safe_load_file(config_path)
       @parser = AcaRadar::ArXivApiParser.new
