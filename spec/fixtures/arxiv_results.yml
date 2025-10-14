@@ -4,8 +4,8 @@ meta:
   max_results: 50
   sort_by: submittedDate
   sort_order: ascending
-  fetched_at: '2025-10-06T10:52:06Z'
-total_results: 410811
+  fetched_at: '2025-10-10T15:43:47Z'
+total_results: 410910
 entries:
 - id: http://arxiv.org/abs/1010.0287v1
   title: |-

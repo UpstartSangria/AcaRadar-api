@@ -1,2 +1,4 @@
-_*
-secrets.yml
+config/secrets.yml
+Gemfile.lock
+coverage/*
+!coverage/.resultset.json
