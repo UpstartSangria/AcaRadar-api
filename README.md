@@ -40,3 +40,8 @@ rake spec
 ```bash
 rake quality:all
 ```
+
+### To run the app:
+```bash
+rake run
+```

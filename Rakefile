@@ -4,6 +4,10 @@ require 'rake/testtask'
 
 CODE = 'lib/'
 
+task :run do
+  sh 'bundle exec puma'
+end
+
 task :default do
   puts `rake -T`
 end
