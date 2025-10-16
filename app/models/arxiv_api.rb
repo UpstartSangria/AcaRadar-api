@@ -2,7 +2,7 @@
 
 require 'http'
 require 'yaml'
-require_relative '../helper/arxiv_api_parser'
+require_relative '../../helper/arxiv_api_parser'
 require_relative 'categories'
 require_relative 'authors'
 require_relative 'papers'
