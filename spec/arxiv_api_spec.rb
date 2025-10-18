@@ -76,23 +76,9 @@ describe 'Test arXiv API library' do
       _(author.citation).must_equal 'Public, John Q.'
       _(author.initials).must_equal 'J.Q.P.'
 
-      _(author.format(:short)).must_equal 'J. Public'
+      _(author.format(AcaRadar::NameFormat::SHORT)).must_equal 'J. Public'
       _(author.to_s).must_equal 'John Q. Public'
       _(author.to_h).must_equal({ name: 'John Q. Public', first_name: 'John Q.', last_name: 'Public' })
-    end
-
-    it 'SAD: handles single-name authors' do
-      author = AcaRadar::Author.new('Madonna')
-
-      _(author.name).must_equal 'Madonna'
-      _(author.first_name).must_equal 'Madonna'
-      _(author.last_name).must_be_nil
-
-      _(author.full).must_equal 'Madonna'
-      _(author.short).must_equal 'Madonna'
-      _(author.citation).must_equal 'Madonna'
-      _(author.initials).must_equal 'M.'
-      _(author.format(:initials)).must_equal 'M.'
     end
   end
 

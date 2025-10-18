@@ -22,7 +22,7 @@ module AcaRadar
         @query += " AND (#{journal_conditions})"
       end
       @url = "https://export.arxiv.org/api/query?#{build_query(max_results, sort_by, sort_order)}"
-      warn "[Query] search_query=#{@query.inspect} url=#{@url}"
+      # warn "[Query] search_query=#{@query.inspect} url=#{@url}"
     end
 
     def build_query(max_results, sort_by, sort_order)
