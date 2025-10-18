@@ -6,11 +6,11 @@ html lang='en'
     title Selected Journals - AcaRadar
   body
     .container.mt-4
-      - if @error
-        .alert.alert-danger = @error
-      p You have selected the following journals: #{@journals.inspect}
-      p We found: #{@total_papers} papers in total
-      - if @papers.any?
+      - if error
+        .alert.alert-danger = error
+      p You have selected the following journals: #{journals.inspect}
+      p We found: #{total_papers} papers in total
+      - if papers.any?
         .table-responsive
           table.table.table-hover
             thead
@@ -23,7 +23,7 @@ html lang='en'
                 th Summary
                 th PDF
             tbody
-              - @papers.each do |paper|
+              - papers.each do |paper|
                 - pdf_link = paper.links.find { |l| l['title'] == 'pdf' } || paper.links.find { |l| l['type'] == 'application/pdf' }
                 - summary_text = paper.summary.to_s.strip
                 - short_summary = summary_text.length > 300 ? "#{summary_text[0,300]}..." : summary_text

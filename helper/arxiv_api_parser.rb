@@ -22,7 +22,6 @@ module AcaRadar
     end
 
     def call_arxiv_url(config, url)
-      # warn "[arXiv][REQUEST] ts=#{Time.now.utc.iso8601} url=#{url} caller=#{caller_locations(1,5).map(&:to_s).join(' | ')}"
       ua = config['ARXIV_USER_AGENT'].to_s
       result =
         HTTP.headers(

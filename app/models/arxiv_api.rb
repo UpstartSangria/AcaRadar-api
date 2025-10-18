@@ -9,8 +9,8 @@ require_relative 'papers'
 require_relative 'query'
 
 module AcaRadar
+  # :reek:TooManyConstants
   module ArXivConfig
-    BASE_QUERY = nil
     MIN_DATE_ARXIV = '201010020000'
     MAX_DATE_ARXIV = '202510020000'
     JOURNALS = [].freeze
@@ -31,13 +31,9 @@ module AcaRadar
     def call(query_obj)
       wait_cooldown
       url = query_obj.url
-      warn "[ArXivApi] requesting url=#{url}"
       response = @parser.call_arxiv_url(@config, url)
-      warn "[ArXivApi] response_code=#{response.code} content_type=#{response.headers['Content-Type']} body_head=#{response.body.to_s[0,1000].gsub(/\s+/, ' ')}"
       data_hash = @parser.parse_arxiv_atom(response.body.to_s)
-      entries = data_hash['entries'] || []
-      warn "[ArXivApi] parsed entries_count=#{entries.size} sample_entry=#{entries.first&.slice('id','title','journal_ref')}"
-
+      data_hash['entries'] || []
       @next_call_time = Time.now.to_f + @cooldown_time + 0.1
       ArXivApiResponse.new(response.code, data_hash)
     rescue StandardError => error # rubocop:disable Naming/RescuedExceptionsVariableName
@@ -58,10 +54,8 @@ module AcaRadar
 
     def initialize(status_code, content_hash)
       @status = status_code.to_i
-      @total_results = content_hash['total_results']&.to_i
-      @start_index = content_hash['start_index']&.to_i
-      @items_per_page = content_hash['items_per_page']&.to_i
-
+      # group pagination values into one ivar to reduce instance var count
+      @pagination = build_pagination(content_hash)
       entries = content_hash['entries'] || []
       @papers = entries.map { |entry_hash| AcaRadar::Paper.new(entry_hash) }
     end
@@ -71,9 +65,22 @@ module AcaRadar
     end
 
     def pagination
-      { 'total_results' => @total_results,
-        'start_index' => @start_index,
-        'items_per_page' => @items_per_page }.compact
+      @pagination.transform_keys(&:to_s)
+    end
+
+    private
+
+    def build_pagination(content_hash)
+      {
+        total_results: extract_integer(content_hash, %w[total_results totalResults]),
+        start_index: extract_integer(content_hash, %w[start_index startIndex]),
+        items_per_page: extract_integer(content_hash, %w[items_per_page itemsPerPage])
+      }.compact
+    end
+
+    def extract_integer(hash, keys)
+      value = keys.map { |key| hash[key] }.compact.first || 0
+      value.to_i
     end
   end
 end
