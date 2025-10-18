@@ -47,7 +47,6 @@ module AcaRadar
 
           @papers = api_response.papers
           @total_papers = api_response.total_results || @papers.size
-
           @pagination = api_response.pagination
 
           view 'selected_journals'

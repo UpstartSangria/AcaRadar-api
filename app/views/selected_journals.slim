@@ -6,8 +6,14 @@ html lang='en'
     title Selected Journals - AcaRadar
   body
     .container.mt-4
-        p You have selected the following journals: #{@journals}
-        p We found: 
-        p #{@total_papers} papers in total 
-        p #{@papers}
+      - if @error
+        .alert.alert-danger = @error
+      p You have selected the following journals: #{@journals.inspect}
+      p We found: 
+      p #{@total_papers} papers in total
+      - if @papers.any?
+        ul.papers
+          - @papers.each do |paper|
+            li.paper
+              h4 = paper.title
 
