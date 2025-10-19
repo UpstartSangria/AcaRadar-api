@@ -15,13 +15,6 @@ module AcaRadar
     plugin :common_logger, $stderr
     plugin :halt
 
-    # Initialize BEFORE route block (before freezing)
-    ARXIV_API = ::AcaRadar::ArXivApi.new('config/secrets.yml')
-
-    def self.arxiv_api
-      ARXIV_API
-    end
-
     route do |routing|
       routing.assets # load CSS
       response['Content-Type'] = 'text/html; charset=utf-8'
@@ -40,7 +33,7 @@ module AcaRadar
 
         begin
           query = AcaRadar::Query.new(journals: journals)
-          api = self.class.arxiv_api
+          api = AcaRadar::ArXivApi.new('config/secrets.yml')
           api_response = api.call(query)
 
           raise "arXiv API returned status #{api_response.status}" unless api_response.ok?
