@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require 'dry-struct'
+require 'dry-types'
+
 module AcaRadar
   # Formats for author name presentation
   module NameFormat

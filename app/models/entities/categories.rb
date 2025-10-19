@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require 'dry-struct'
+require 'dry-types'
+
 module AcaRadar
   # Holds the primary and weird secondary categories of the paper
   class Categories

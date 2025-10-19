@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require 'dry-struct'
+require 'dry-types'
+
 module AcaRadar
   # Represents a single paper entry from the arXiv API, including metadata such as title, authors, categories, and links
   class Paper

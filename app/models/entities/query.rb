@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require 'dry-struct'
+require 'dry-types'
+
 module AcaRadar
   # Query object to set up query parameters (reek hot fix)
   class Query
