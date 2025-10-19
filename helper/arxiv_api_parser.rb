@@ -28,6 +28,8 @@ module AcaRadar
           'Accept' => 'application/atom+xml',
           'User-Agent' => ua
         ).get(url)
+      # warn "[arXiv] code=#{result.code} content_type=#{result.headers['Content-Type']}"
+      # warn "[arXiv] head=#{result.body.to_s[0, 200].gsub(/\s+/, ' ')}"
       successful?(result) ? result : raise(HTTP_ERROR[result.code])
     end
 

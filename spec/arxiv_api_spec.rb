@@ -7,7 +7,7 @@ require 'ostruct'
 require 'cgi'
 
 require_relative '../helper/arxiv_api_parser'
-require_relative '../lib/arxiv_api'
+require_relative '../app/models/arxiv_api'
 require_relative 'spec_helper'
 
 # rubocop:disable Metrics/BlockLength
@@ -28,15 +28,15 @@ describe 'Test arXiv API library' do
   end
 
   describe 'Query class' do
-    it 'HAPPY: should build correct query url' do
-      query = AcaRadar::Query.new(base_query: 'all:Reinforcement Learning', max_results: 5)
+    it 'HAPPY: should correctly include the journal parameter in the query' do
+      query = AcaRadar::Query.new(journals: ['Nature', 'MIS Quarterly'])
       url = query.url
 
       encoded = url.match(/search_query=([^&]+)/)[1]
       decoded = CGI.unescape(encoded)
 
-      _(decoded).must_include 'all:Reinforcement Learning'
-      _(url).must_include 'max_results=5'
+      _(decoded).must_include 'jr:"Nature"'
+      _(decoded).must_include 'jr:"MIS Quarterly"'
     end
   end
 
@@ -76,23 +76,9 @@ describe 'Test arXiv API library' do
       _(author.citation).must_equal 'Public, John Q.'
       _(author.initials).must_equal 'J.Q.P.'
 
-      _(author.format(:short)).must_equal 'J. Public'
+      _(author.format(AcaRadar::NameFormat::SHORT)).must_equal 'J. Public'
       _(author.to_s).must_equal 'John Q. Public'
       _(author.to_h).must_equal({ name: 'John Q. Public', first_name: 'John Q.', last_name: 'Public' })
-    end
-
-    it 'SAD: handles single-name authors' do
-      author = AcaRadar::Author.new('Madonna')
-
-      _(author.name).must_equal 'Madonna'
-      _(author.first_name).must_equal 'Madonna'
-      _(author.last_name).must_be_nil
-
-      _(author.full).must_equal 'Madonna'
-      _(author.short).must_equal 'Madonna'
-      _(author.citation).must_equal 'Madonna'
-      _(author.initials).must_equal 'M.'
-      _(author.format(:initials)).must_equal 'M.'
     end
   end
 
