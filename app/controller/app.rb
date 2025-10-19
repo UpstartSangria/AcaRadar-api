@@ -3,8 +3,8 @@
 require 'roda'
 require 'slim'
 require 'uri'
-require_relative '../models/arxiv_api'
-require_relative '../models/query'
+require_relative '../models/gateways/arxiv_api'
+require_relative '../models/entities/query'
 
 # rubocop:disable Metrics/BlockLength
 module AcaRadar
@@ -14,13 +14,6 @@ module AcaRadar
     plugin :assets, css: 'style.css', path: 'app/views/assets'
     plugin :common_logger, $stderr
     plugin :halt
-
-    # Initialize BEFORE route block (before freezing)
-    ARXIV_API = ::AcaRadar::ArXivApi.new('config/secrets.yml')
-
-    def self.arxiv_api
-      ARXIV_API
-    end
 
     route do |routing|
       routing.assets # load CSS
@@ -40,7 +33,7 @@ module AcaRadar
 
         begin
           query = AcaRadar::Query.new(journals: journals)
-          api = self.class.arxiv_api
+          api = AcaRadar::ArXivApi.new('config/secrets.yml')
           api_response = api.call(query)
 
           raise "arXiv API returned status #{api_response.status}" unless api_response.ok?
