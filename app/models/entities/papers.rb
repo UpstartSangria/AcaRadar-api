@@ -1,37 +1,29 @@
-# frozen_string_literal: true
+#frozen_string_literal: true
 
-# module AcaRadar
-#   Represents a single paper entry from the arXiv API, including metadata such as title, authors, categories, and links
-#   class Paper
-#     attr_reader :id, :title, :published, :updated, :summary, :authors, :categories, :links, :journal_ref
-#     def initialize(paper_hash)
-#       assign_basic_fields(paper_hash)
-#       # @summary = Summary.new(paper_hash['summary'])
-#       @authors = build_authors(paper_hash)
-#       @categories = build_categories(paper_hash)
-#       @links = build_links(paper_hash)
-#     end
+require_relative '../mappers/author_mapper'
+require_relative '../mappers/categories_mapper'
+require_relative '../mappers/links_mapper'
 
-#     private
+module AcaRadar
+  #Represents a single paper entry from the arXiv API, including metadata such as title, authors, categories, and links
+  class Paper
+    attr_reader :id, :title, :published, :updated, :summary, :authors, :categories, :links, :journal_ref
 
-#     def assign_basic_fields(hash)
-#       @id = hash['id']
-#       @title = hash['title']
-#       @published = hash['published']
-#       @updated = hash['updated']
-#     end
+    def initialize(paper_hash)
+      assign_basic_fields(paper_hash)
+      # @summary = Summary.new(paper_hash['summary'])
+      @authors = AuthorMapper.new(paper_hash).build_entity
+      @categories = CategoriesMapper.new(paper_hash).build_entity
+      @links = LinksMapper.new(paper_hash).build_entity
+    end
 
-#     def build_authors(hash)
-#       Array(hash['authors']).map { |name| Author.new(name) }
-#     end
+    private
 
-#     def build_categories(hash)
-#       Categories.new(hash['categories'], hash['primary_category'])
-#     end
-
-#     def build_links(hash)
-#       Array(hash['links'])
-#     end
-#   end
-# end
-# rubocop:enable Layout/LineLength
+    def assign_basic_fields(hash)
+      @id = hash['id']
+      @title = hash['title']
+      @published = hash['published']
+      @updated = hash['updated']
+    end
+  end
+end

@@ -7,7 +7,7 @@ require 'vcr'
 require 'webmock'
 require 'simplecov'
 
-require_relative '../app/models/arxiv_api'
+require_relative '../app/models/gateways/arxiv_api'
 require_relative '../helper/arxiv_api_parser'
 
 CONFIG = YAML.safe_load_file('config/secrets.yml', aliases: true)

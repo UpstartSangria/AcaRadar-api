@@ -1,12 +1,12 @@
-# frozen_string_literal: true
+#frozen_string_literal: true
 
 require 'http'
 require 'yaml'
-require_relative '../../helper/arxiv_api_parser'
-require_relative 'categories'
-require_relative 'authors'
-require_relative 'papers'
-require_relative 'query'
+require_relative '../../../helper/arxiv_api_parser'
+require_relative '../entities/categories'
+require_relative '../entities/authors'
+require_relative '../entities/papers'
+require_relative '../entities/query'
 
 module AcaRadar
   # :reek:TooManyConstants
@@ -36,7 +36,7 @@ module AcaRadar
       data_hash['entries'] || []
       @next_call_time = Time.now.to_f + @cooldown_time + 0.1
       ArXivApiResponse.new(response.code, data_hash)
-    rescue StandardError => error # rubocop:disable Naming/RescuedExceptionsVariableName
+    rescue StandardError => error
       raise "Failed to fetch or parse arXiv data: #{error.message}"
     end
 
