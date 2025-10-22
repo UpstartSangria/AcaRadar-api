@@ -9,7 +9,7 @@ gem 'figaro', '~> 1.0'
 gem 'pry'
 gem 'rake'
 
-# Database 
+# Database
 gem 'hirb'
 gem 'sequel', '~> 5.0'
 
