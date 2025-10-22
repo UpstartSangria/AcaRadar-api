@@ -14,6 +14,7 @@ gem 'hirb'
 gem 'sequel', '~> 5.0'
 
 # Web application
+gem 'logger', '~> 1.0'
 gem 'puma', '~> 6.0'
 gem 'roda', '~> 3.0'
 gem 'slim', '~> 5.0'
@@ -24,6 +25,10 @@ gem 'dry-types', '~> 1.0'
 
 # Networking
 gem 'http', '~> 5.3.1'
+
+group :development, :test do
+  gem 'sqlite3', '~> 1.0'
+end
 
 # Testing
 group :test do
