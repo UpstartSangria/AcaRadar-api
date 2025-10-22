@@ -13,4 +13,5 @@ Metrics/BlockLength:
     - 'spec/**/*'
 
 Metrics/ParameterLists:
-  Max: 6
+  # change the parameter list as query needs a lot of parameters 
+  Max: 8

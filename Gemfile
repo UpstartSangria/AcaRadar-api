@@ -2,6 +2,17 @@
 
 source 'https://rubygems.org'
 
+# Configuration
+gem 'figaro', '~> 1.0'
+
+# Global Debugging
+gem 'pry'
+gem 'rake'
+
+# Database 
+gem 'hirb'
+gem 'sequel', '~> 5.0'
+
 # Web application
 gem 'puma', '~> 6.0'
 gem 'roda', '~> 3.0'
@@ -15,19 +26,24 @@ gem 'dry-types', '~> 1.0'
 gem 'http', '~> 5.3.1'
 
 # Testing
-gem 'minitest'
-gem 'minitest-rg'
-gem 'simplecov', '~> 0'
-gem 'vcr', '~> 6'
-gem 'webmock', '~> 3'
+group :test do
+  gem 'minitest', '~> 5.20'
+  gem 'minitest-rg', '~> 5.2'
+  gem 'simplecov', '~> 0'
+  gem 'vcr', '~> 6'
+  gem 'webmock', '~> 3'
+end
 
-# Debugging
-gem 'pry'
-
-# Code quality
-gem 'flog'
-gem 'reek'
-gem 'rubocop'
+# Development
+group :development do
+  gem 'flog'
+  gem 'reek'
+  gem 'rerun'
+  gem 'rubocop'
+  gem 'rubocop-minitest'
+  gem 'rubocop-rake'
+  gem 'rubocop-sequel'
+end
 
 # Utiliy tools
 gem 'engtagger'
