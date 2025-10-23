@@ -3,7 +3,7 @@
 require 'roda'
 require 'slim'
 require 'uri'
-require_relative '../models/gateways/arxiv_api'
+require_relative '../infrastructure/arxiv/gateways/arxiv_api'
 require_relative '../models/entities/query'
 
 # rubocop:disable Metrics/BlockLength

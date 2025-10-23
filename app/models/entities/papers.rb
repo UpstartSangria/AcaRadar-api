@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative '../mappers/author_mapper'
-require_relative '../mappers/categories_mapper'
-require_relative '../mappers/links_mapper'
+require_relative '../../infrastructure/arxiv/mappers/author_mapper'
+require_relative '../../infrastructure/arxiv/mappers/categories_mapper'
+require_relative '../../infrastructure/arxiv/mappers/links_mapper'
 
 module AcaRadar
   # Represents a single paper entry from the arXiv API, including metadata such as title, authors, categories, and links

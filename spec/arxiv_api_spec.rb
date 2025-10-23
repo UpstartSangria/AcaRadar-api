@@ -6,8 +6,6 @@ require 'yaml'
 require 'ostruct'
 require 'cgi'
 
-require_relative '../helper/arxiv_api_parser'
-require_relative '../app/models/gateways/arxiv_api'
 require_relative 'spec_helper'
 
 # rubocop:disable Metrics/BlockLength

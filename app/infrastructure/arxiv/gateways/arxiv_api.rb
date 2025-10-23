@@ -2,11 +2,11 @@
 
 require 'http'
 require 'yaml'
-require_relative '../../../helper/arxiv_api_parser'
-require_relative '../entities/categories'
-require_relative '../entities/authors'
-require_relative '../entities/papers'
-require_relative '../entities/query'
+require_relative '../../../../helper/arxiv_api_parser'
+require_relative '../../../models/entities/categories'
+require_relative '../../../models/entities/authors'
+require_relative '../../../models/entities/papers'
+require_relative '../../../models/entities/query'
 
 module AcaRadar
   # :reek:TooManyConstants

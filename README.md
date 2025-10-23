@@ -45,3 +45,21 @@ rake quality:all
 ```bash
 rake run
 ```
+
+### To run migration:
+```bash
+RACK_ENV=development rake db:migrate
+RACK_ENV=test rake db:migrate
+```
+
+### To test orm:
+```bash
+rake console 
+# pry(main)> AcaRadar::Database::PaperOrm.all
+```
+
+### To delete the database:
+```bash
+RACK_ENV=development rake db:drop
+RACK_ENV=test rake db:drop
+```
