@@ -57,7 +57,7 @@ module AcaRadar
       # group pagination values into one ivar to reduce instance var count
       @pagination = build_pagination(content_hash)
       entries = content_hash['entries'] || []
-      @papers = entries.map { |entry_hash| AcaRadar::Paper.new(entry_hash) }
+      @papers = entries.map { |entry_hash| AcaRadar::Entity::Paper.new(entry_hash) }
     end
 
     def ok?

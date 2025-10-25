@@ -8,7 +8,7 @@ module AcaRadar
     end
 
     def build_entity
-      Categories.new(@hash['categories'], @hash['primary_category'])
+      AcaRadar::Entity::Categories.new(@hash['categories'], @hash['primary_category'])
     end
   end
 end

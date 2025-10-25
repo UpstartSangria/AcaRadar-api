@@ -29,57 +29,59 @@ module AcaRadar
     private_constant :DEFAULT_PARTS
   end
 
-  # Represents an Author, allowing the end-user to format the name in various ways
-  class Author
-    attr_reader :name, :first_name, :last_name
+  module Entity
+    # Represents an Author, allowing the end-user to format the name in various ways
+    class Author
+      attr_reader :name, :first_name, :last_name
 
-    def initialize(name)
-      @name = name.to_s.strip
-      @first_name, @last_name = NameParser.parse(@name)
-    end
+      def initialize(name)
+        @name = name.to_s.strip
+        @first_name, @last_name = NameParser.parse(@name)
+      end
 
-    # Default format: "First Last"
-    def full
-      format_with(NameFormat::FULL)
-    end
+      # Default format: "First Last"
+      def full
+        format_with(NameFormat::FULL)
+      end
 
-    # Short format: "F. Last"
-    def short
-      format_with(NameFormat::SHORT)
-    end
+      # Short format: "F. Last"
+      def short
+        format_with(NameFormat::SHORT)
+      end
 
-    # Citation format: "Last, First"
-    def citation
-      format_with(NameFormat::CITATION)
-    end
+      # Citation format: "Last, First"
+      def citation
+        format_with(NameFormat::CITATION)
+      end
 
-    # Initials format: "F.L."
-    def initials
-      format_with(NameFormat::INITIALS)
-    end
+      # Initials format: "F.L."
+      def initials
+        format_with(NameFormat::INITIALS)
+      end
 
-    # Custom format helper (choose :full, :short, :citation, or :initials)
-    def format(formatter = NameFormat::FULL)
-      format_with(formatter)
-    end
+      # Custom format helper (choose :full, :short, :citation, or :initials)
+      def format(formatter = NameFormat::FULL)
+        format_with(formatter)
+      end
 
-    def to_s
-      full
-    end
+      def to_s
+        full
+      end
 
-    def to_h
-      {
-        name: name,
-        first_name: first_name,
-        last_name: last_name
-      }.compact
-    end
+      def to_h
+        {
+          name: name,
+          first_name: first_name,
+          last_name: last_name
+        }.compact
+      end
 
-    private
+      private
 
-    # Splits name into first and last components
-    def format_with(formatter)
-      formatter.call(@first_name, @last_name)
+      # Splits name into first and last components
+      def format_with(formatter)
+        formatter.call(@first_name, @last_name)
+      end
     end
   end
 end

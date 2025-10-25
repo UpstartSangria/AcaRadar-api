@@ -8,7 +8,7 @@ module AcaRadar
     end
 
     def build_entity
-      Array(@hash['authors']).map { |name| Author.new(name) }
+      Array(@hash['authors']).map { |name| AcaRadar::Entity::Author.new(name) }
     end
   end
 end
