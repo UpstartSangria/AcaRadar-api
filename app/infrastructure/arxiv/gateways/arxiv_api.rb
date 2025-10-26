@@ -14,7 +14,7 @@ module AcaRadar
     MIN_DATE_ARXIV = '201010020000'
     MAX_DATE_ARXIV = '202510020000'
     JOURNALS = [].freeze
-    MAX_RESULTS = 50
+    MAX_RESULTS = 5
     SORT_BY = 'submittedDate'
     SORT_ORDER = 'ascending'
   end

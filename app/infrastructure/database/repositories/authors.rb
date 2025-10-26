@@ -16,25 +16,22 @@ module AcaRadar
         rebuild_entity Database::AuthorOrm.first(last_name:)
       end
 
+      def self.create(entity)
+        Database::AuthorOrm.create(
+          name: entity.name,
+          first_name: entity.first_name,
+          last_name: entity.last_name
+        )
+      end
+
       def self.rebuild_entity(db_record)
         return nil unless db_record
 
         Entity::Author.new(
-          id: db_record.id,
           name: db_record.name,
           first_name: db_record.first_name,
           last_name: db_record.last_name
         )
-      end
-
-      def self.rebuild_many(db_records)
-        db_records.map do |db_author|
-          Authors.rebuild_entity(db_author)
-        end
-      end
-
-      def self.db_find_or_create(entity)
-        Database::AuthorOrm.find_or_create(entity.to_attr_hash)
       end
     end
   end
