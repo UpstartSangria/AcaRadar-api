@@ -3,7 +3,7 @@
 require 'roda'
 require 'slim'
 require 'uri'
-require_relative '../models/gateways/arxiv_api'
+require_relative '../infrastructure/arxiv/gateways/arxiv_api'
 require_relative '../models/entities/query'
 
 # rubocop:disable Metrics/BlockLength
@@ -33,7 +33,7 @@ module AcaRadar
 
         begin
           query = AcaRadar::Query.new(journals: journals)
-          api = AcaRadar::ArXivApi.new('config/secrets.yml')
+          api = AcaRadar::ArXivApi.new
           api_response = api.call(query)
 
           raise "arXiv API returned status #{api_response.status}" unless api_response.ok?

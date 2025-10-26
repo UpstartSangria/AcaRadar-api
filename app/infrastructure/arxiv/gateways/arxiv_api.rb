@@ -2,11 +2,11 @@
 
 require 'http'
 require 'yaml'
-require_relative '../../../helper/arxiv_api_parser'
-require_relative '../entities/categories'
-require_relative '../entities/authors'
-require_relative '../entities/papers'
-require_relative '../entities/query'
+require_relative '../../../../helper/arxiv_api_parser'
+require_relative '../../../models/entities/categories'
+require_relative '../../../models/entities/authors'
+require_relative '../../../models/entities/papers'
+require_relative '../../../models/entities/query'
 
 module AcaRadar
   # :reek:TooManyConstants
@@ -14,15 +14,15 @@ module AcaRadar
     MIN_DATE_ARXIV = '201010020000'
     MAX_DATE_ARXIV = '202510020000'
     JOURNALS = [].freeze
-    MAX_RESULTS = 50
+    MAX_RESULTS = 5
     SORT_BY = 'submittedDate'
     SORT_ORDER = 'ascending'
   end
 
   # Library for arXiv Web API
   class ArXivApi
-    def initialize(config_path = 'config/secrets.yml', cooldown_time = 3)
-      @config = YAML.safe_load_file(config_path)
+    def initialize(cooldown_time = 3)
+      @config = AcaRadar::App::CONFIG
       @parser = AcaRadar::ArXivApiParser.new
       @next_call_time = 0
       @cooldown_time = cooldown_time
@@ -57,7 +57,7 @@ module AcaRadar
       # group pagination values into one ivar to reduce instance var count
       @pagination = build_pagination(content_hash)
       entries = content_hash['entries'] || []
-      @papers = entries.map { |entry_hash| AcaRadar::Paper.new(entry_hash) }
+      @papers = entries.map { |entry_hash| AcaRadar::Entity::Paper.new(entry_hash) }
     end
 
     def ok?

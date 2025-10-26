@@ -1,6 +1,101 @@
 {
   "RSpec": {
-    "coverage": {},
-    "timestamp": 1760890383
+    "coverage": {
+      "/home/poyasharonlin/SOA/Project/sangria/spec/infrastructure_database_spec.rb": {
+        "lines": [
+          null,
+          null,
+          1,
+          1,
+          1,
+          1,
+          null,
+          1,
+          1,
+          null,
+          1,
+          0,
+          null,
+          null,
+          null,
+          1,
+          0,
+          null,
+          null,
+          null,
+          1,
+          1,
+          0,
+          null,
+          null,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          null,
+          0,
+          0,
+          0,
+          null,
+          null,
+          null
+        ]
+      },
+      "/home/poyasharonlin/SOA/Project/sangria/spec/helpers/vcr_helper.rb": {
+        "lines": [
+          null,
+          null,
+          1,
+          1,
+          null,
+          null,
+          1,
+          1,
+          1,
+          null,
+          1,
+          1,
+          1,
+          1,
+          null,
+          null,
+          null,
+          1,
+          0,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          1,
+          0,
+          null
+        ]
+      },
+      "/home/poyasharonlin/SOA/Project/sangria/spec/helpers/database_helper.rb": {
+        "lines": [
+          null,
+          null,
+          null,
+          1,
+          1,
+          null,
+          0,
+          0,
+          0,
+          0,
+          0,
+          null
+        ]
+      }
+    },
+    "timestamp": 1761496205
   }
 }

@@ -6,9 +6,7 @@ require 'yaml'
 require 'ostruct'
 require 'cgi'
 
-require_relative '../helper/arxiv_api_parser'
-require_relative '../app/models/gateways/arxiv_api'
-require_relative 'spec_helper'
+require_relative 'helpers/spec_helper'
 
 # rubocop:disable Metrics/BlockLength
 describe 'Test arXiv API library' do
@@ -43,7 +41,7 @@ describe 'Test arXiv API library' do
   describe 'Categories class' do
     it 'HAPPY: should return correct categories and primary' do
       entry = CORRECT['entries'][0]
-      categories = AcaRadar::Categories.new(entry['categories'], entry['primary_category'])
+      categories = AcaRadar::Entity::Categories.new(entry['categories'], entry['primary_category'])
 
       _(categories.all).must_equal Array(entry['categories'])
       _(categories.primary).must_equal entry['primary_category']
@@ -55,7 +53,7 @@ describe 'Test arXiv API library' do
 
     it 'HAPPY: handles nils and duplicates correctly' do
       input = [nil, 'cs.AI', 'cs.AI', 'stat.ML']
-      categories = AcaRadar::Categories.new(input, nil)
+      categories = AcaRadar::Entity::Categories.new(input, nil)
 
       _(categories.all).must_equal ['cs.AI', 'stat.ML']
       _(categories.primary).must_be_nil
@@ -65,7 +63,7 @@ describe 'Test arXiv API library' do
 
   describe 'Author class' do
     it 'HAPPY: parses and formats multi-part names' do
-      author = AcaRadar::Author.new('John Q. Public')
+      author = AcaRadar::Entity::Author.new('John Q. Public')
 
       _(author.name).must_equal 'John Q. Public'
       _(author.first_name).must_equal 'John Q.'
@@ -85,7 +83,7 @@ describe 'Test arXiv API library' do
   describe 'Paper class' do
     it 'HAPPY: should initialize with correct attributes' do
       entry = CORRECT['entries'][0]
-      paper = AcaRadar::Paper.new(entry)
+      paper = AcaRadar::Entity::Paper.new(entry)
 
       _(paper.id).must_equal entry['id']
       _(paper.title).must_equal entry['title']
