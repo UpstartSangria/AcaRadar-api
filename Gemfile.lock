@@ -233,6 +233,7 @@ DEPENDENCIES
   rake
   reek
   rerun
+  rexml
   roda (~> 3.0)
   rubocop
   rubocop-minitest
