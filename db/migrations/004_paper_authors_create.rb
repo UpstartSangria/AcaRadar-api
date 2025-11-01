@@ -4,12 +4,10 @@ Sequel.migration do
   change do
     create_table(:paper_authors) do
       foreign_key :paper_id, :papers,
-                  type: String,
                   null: false,
                   on_delete: :cascade
 
       foreign_key :author_id, :authors,
-                  type: String,
                   null: false,
                   on_delete: :cascade
 
