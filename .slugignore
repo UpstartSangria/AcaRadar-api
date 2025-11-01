@@ -1,0 +1,8 @@
+/spec/
+/coverage/
+.DS_Store
+.gitignore
+.reek.yml
+.rubocop.yml
+.pryrc
+README.md
