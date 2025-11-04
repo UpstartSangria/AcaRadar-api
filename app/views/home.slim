@@ -18,6 +18,23 @@
         button type='submit' id='find-button' class="btn btn-primary w-100" 
           span.spinner-grow.spinner-grow-sm.d-none role="status" aria-hidden="true"
           span.button-text Find
+  hr.my-4
+  h2.mb-3 Previously Viewed Papers
+  - if watched_papers.any?
+    - watched_papers.each do |paper|
+      .card.mb-3
+        .card-body
+          h5.card-title
+            a href=paper.origin_id target="_blank" rel="noopener noreferrer" = paper.title
+          p.small.text-muted
+            | Published on: #{paper.published}
+          p.card-text
+            = paper.summary
+
+  - else
+    .alert.alert-info role="alert"
+      h4.alert-heading Welcome!
+      p You haven't viewed any papers yet. Use the form above to find some interesting research. Your viewed papers will appear here for easy access later.
   javascript:
     document.getElementById('find-journals-form').addEventListener('submit', function() {
       const button = document.getElementById('find-button');

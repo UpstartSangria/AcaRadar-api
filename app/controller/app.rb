@@ -14,14 +14,18 @@ module AcaRadar
     plugin :assets, css: 'style.css', path: 'app/views/assets'
     plugin :common_logger, $stderr
     plugin :halt
+    plugin :all_verbs
 
     route do |routing|
-      routing.assets # load CSS
+      routing.assets
       response['Content-Type'] = 'text/html; charset=utf-8'
 
       # GET /
       routing.root do
-        view 'home'
+        # display papers in previous session
+        session[:watching] ||= []
+        watched_papers = Repository::Paper.find_many_by_ids(session[:watching])
+        view 'home', locals: { watched_papers: watched_papers }
       end
 
       # GET /selected_journals
@@ -41,6 +45,11 @@ module AcaRadar
           papers = api_response.papers
           total_papers = api_response.total_results || papers.size
           pagination = api_response.pagination
+          # store papers' ids to display at home next time
+          papers.each do |paper|
+            Repository::Paper.db_find_or_create(paper)
+          end
+          session[:watching] |= papers.map(&:origin_id)
 
           view 'selected_journals',
                locals: { journals: journals, papers: papers, total_papers: total_papers, pagination: pagination,

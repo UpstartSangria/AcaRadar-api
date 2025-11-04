@@ -4,6 +4,7 @@ require 'roda'
 require 'figaro'
 require 'yaml'
 require 'sequel'
+require 'rack/session'
 
 module AcaRadar
   # Configuration for the App
@@ -18,6 +19,7 @@ module AcaRadar
         )
         Figaro.load
         def self.config = Figaro.env
+        use Rack::Session::Cookie, secret: config.SESSION_SECRET
         CONFIG = YAML.safe_load_file('config/secrets.yml')
         ENV['DATABASE_URL'] ||= "sqlite://#{config.DB_FILENAME}"
       end
@@ -26,6 +28,7 @@ module AcaRadar
     configure :production do
       CONFIG = YAML.safe_load_file('config/secrets_example.yml')
       def self.config = ENV
+      use Rack::Session::Cookie, secret: config.SESSION_SECRET
     end
 
     @db = Sequel.connect(ENV.fetch('DATABASE_URL'))

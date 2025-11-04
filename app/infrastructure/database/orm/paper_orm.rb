@@ -4,6 +4,7 @@ module AcaRadar
   module Database
     # Object-Relational Mapper for Papers
     class PaperOrm < Sequel::Model(:papers)
+      set_primary_key :paper_id
       one_to_many :paper_authors,
                   class: :'AcaRadar::Database::PaperAuthorOrm',
                   key: :paper_id
@@ -25,10 +26,6 @@ module AcaRadar
                    right_key: :category_id
 
       plugin :timestamps, update_on_create: true
-
-      def self.find_or_create(info)
-        first(paper_id: info[:paper_id]) || create(info)
-      end
     end
   end
 end
