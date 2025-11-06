@@ -17,7 +17,6 @@ module AcaRadar
     plugin :common_logger, $stderr
     plugin :halt
     plugin :all_verbs
-    plugin :sessions, secret: ENV.fetch('SESSION_SECRET', nil)
     plugin :flash
 
     MESSAGE = {
