@@ -19,6 +19,14 @@ Rake::TestTask.new(:spec) do |t|
   t.warning = false
 end
 
+desc 'Generates a 64 by secret for Rack::Session'
+task :new_session_secret do
+  require 'base64'
+  require 'securerandom'
+  secret = SecureRandom.random_bytes(64).then { Base64.urlsafe_encode64(it) }
+  puts "SESSION_SECRET: #{secret}"
+end
+
 namespace :db do
   task :config do
     require 'sequel'
