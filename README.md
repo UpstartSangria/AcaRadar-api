@@ -33,7 +33,8 @@ We hope this tool will give researchers a quick overview of research trends in t
 - Run `python3 -m venv .venv` to create a virtual environment
 - Run `source .venv/bin/activate` to activate the virtual environment
 - Run `pip install -r requirements.txt` to install python dependencies
-
+- Run `ruby bin/fetch_arxiv_papers.rb` to fetch papers from arXiv API and store them in the database
+- Run `rake run` to run the application
 
 ## Running tests
 ### To run tests:
