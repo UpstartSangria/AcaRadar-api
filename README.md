@@ -70,40 +70,35 @@ RACK_ENV=development rake db:drop
 RACK_ENV=test rake db:drop
 ```
 
-## Entity Relationship Diagram 
-[Editable version](https://mermaid.live/edit#pako:eNqlVF1vmzAU_SuW90oiAoEE-hRl7SZVXaOm07QJKXKxAWtgI2PUpAn_fddAvpRkmjS_WD7n3E9fe4tjSRkOMVOfOUkVKSKBYM2-v359fkHb7mQWFxpxihaPR6jSiosUCVKwC5AkCc850VyKC44VhOcd2nTbfPZ6_-X55ed_BKSsihUvjwF714vZ4v4fFc5yeONVtrRN6AJLE-wpRohsr6LedxW97KABe-SpqsapVfprK63tqSlEytIK-Hx3OC1DqTf2OkokxdiXOrpzcjQTkslWpzyp01cbcbDHbb8zJCFOGMVH0yVYTP5ueWxbvimh3EV7wfkt_775PjR6uD5Lbh3ujDWGELF0zB6FEY97YnEdYZg1HCRitYDRedR9jqqIILWpDSkH0DI1wSSuFyDebY1h6tK_ZE1j841ZlhtKrbcWh6R4kU-oEUPN90geayhjIU-sbeD8GMZglpGsXIt06Smy-XndlQwENFMVdxztAWwevKQ_QpSTxYd6hBHa9YrI-s5xn-zsyk_M1auVmtnNGULYjOQH1Bd8Dg3ZQEpZZrsDBtb6CHcNFyuRExDk2hFlayTjMcJiSv4FSX5jX0X8leUhLxS8rDkVGupXrq_p32-7Fwqsy19B6ZgImGNgmNw5HT2uNwi9dwmoyHvj0NJr4zDeyJ64wtvAHYngwnrmuPR4E_Daa24zcW_mhD2kPfc1zPm7i257peEATNHww3feg)
+### To test api
 
-```mermaid 
-erDiagram
-    AUTHOR {
-        int id PK
-        string name
-        string affiliation
-        string email
-    }
-    CATEGORY {
-        int id PK
-        string name
-        string description
-    }
-    PAPER {
-        int id PK
-        string title
-        text abstract
-        date publication_date
-        string pdf_url
-    }
-    PAPER_AUTHOR {
-        int paper_id FK
-        int author_id FK
-        int author_order0
-    }
-    PAPER_CATEGORY {C9
-        int paper_id FK
-        int category_id FK
-    }
-    PAPER ||--|{ PAPER_AUTHOR : "has authors"
-    AUTHOR ||--|{ PAPER_AUTHOR : "writes"
-    PAPER ||--|{ PAPER_CATEGORY : "has categories"
-    CATEGORY ||--|{ PAPER_CATEGORY : "categorizes"
+1. Start fresh — delete any old cookie file
+```bash
+rm -f /tmp/acaradar_cookie.jar
+```
+
+2. Start the server
+```bash
+rake run
+```
+
+3. POST your research interest (this sets the session)
+```bash
+curl -X POST http://localhost:9292/api/v1/research_interest \
+     -H "Content-Type: application/json" \
+     -d '{"research_interest": "machine learning"}' \
+     --cookie-jar /tmp/acaradar_cookie.jar \
+     -w "\nHTTP Status: %{http_code}\n" \
+     --silent
+
+# {"term":"machine learning","vector_2d":{"x":-0.024392,"y":0.003244}}
+# HTTP Status: 201
+```
+
+4. GET the papers — reusing the same session cookie
+```bash
+curl "http://localhost:9292/api/v1/papers?journals[]=Nature&journals[]=Science&page=1" \
+     --cookie /tmp/acaradar_cookie.jar \
+     -w "\nHTTP Status: %{http_code}\n" \
+     --silent
 ```
