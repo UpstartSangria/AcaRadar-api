@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative '../../services/calculate_similarity'
 require 'roar/decorator'
 require 'roar/json'
 
@@ -18,7 +19,7 @@ module AcaRadar
 
       property :similarity_score,
                exec_context: :decorator,
-               if: -> { options[:user_vector_2d] }
+               render_nil: true
 
       def published_at
         represented.published_at.iso8601
@@ -28,11 +29,12 @@ module AcaRadar
         represented.authors.join(', ')
       end
 
-      def similarity_score
-        return nil unless represented.embedding_2d && options[:user_vector_2d]
+      def similarity_score(options = {})
+        user_vector = options[:user_vector_2d]
+        return nil unless user_vector || represented.embedding_2d.nil?
 
         Service::CalculateSimilarity.score(
-          options[:user_vector_2d],
+          user_vector,
           represented.embedding_2d
         )&.round(4)
       end

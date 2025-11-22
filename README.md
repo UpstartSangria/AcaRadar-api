@@ -97,8 +97,12 @@ curl -X POST http://localhost:9292/api/v1/research_interest \
 
 4. GET the papers — reusing the same session cookie
 ```bash
-curl "http://localhost:9292/api/v1/papers?journals[]=Nature&journals[]=Science&page=1" \
-     --cookie /tmp/acaradar_cookie.jar \
-     -w "\nHTTP Status: %{http_code}\n" \
-     --silent
+curl "http://localhost:9292/api/v1/papers?journals%5B%5D=MIS+Quarterly&journals%5B%5D=Management+Science&page=1"   
+    --cookie /tmp/acaradar_cookie.jar 
+    -w "\nHTTP Status: %{http_code}\n"
+
+# {"research_interest_term":"machine learning","research_interest_2d":[-0.024391869083046913,0.0032444987446069717],"journals":["MIS Quarterly","Management Science"],"papers":{"data":[{"origin_id":"http://arxiv.org/abs/1702.08072v1","title":"Knowledge Reuse for Customization: Metamodels in an Open Design Community for 3d Printing","abstract" ...
+# ...
+# "pdf_url":"https://arxiv.org/pdf/1108.4098v1","published_at":"2011-08-20T07:43:46+08:00","authors":"","similarity_score":null}]},"pagination":{"current":1,"total_pages":2,"total_count":15,"prev_page":null,"next_page":2}}
+# HTTP Status: 200
 ```

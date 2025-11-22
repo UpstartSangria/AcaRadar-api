@@ -7,14 +7,6 @@ module AcaRadar
       collection :data,
                  decorator: Representer::Paper,
                  class: Entity::Paper
-
-      property :pagination do
-        property :current
-        property :total_pages
-        property :total_count
-        property :prev_page, as: :prev
-        property :next_page, as: :next
-      end
     end
   end
 end

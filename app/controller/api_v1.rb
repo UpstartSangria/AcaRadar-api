@@ -65,11 +65,13 @@ module AcaRadar
             ).tap { |r| response.status = r.status }.to_json
           end
 
-          papers, total = Repository::Paper.find_by_categories(
+          papers = Repository::Paper.find_by_categories(
             request_obj.journals,
             limit: 10,
             offset: request_obj.offset(10)
           )
+
+          total = Repository::Paper.count_by_categories(request_obj.journals)
 
           user_vector = session[:research_interest_2d]
 
@@ -92,8 +94,7 @@ module AcaRadar
 
           # Pass user_vector to Paper representer via options
           Representer::PapersPageResponse.new(response_obj)
-                                         .for_options(user_vector_2d: user_vector)
-                                         .to_json
+                                         .to_json(user_vector_2d: user_vector)
         end
       end
     end

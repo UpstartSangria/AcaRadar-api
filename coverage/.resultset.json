@@ -1,27 +1,27 @@
 {
   "RSpec": {
     "coverage": {
-      "/home/poyasharonlin/SOA/Project/sangria/spec/domain/entities/concepts_spec.rb": {
+      "/home/poyasharonlin/SOA/Project/api-acaradar/spec/domain/entities/concepts_spec.rb": {
         "lines": [
           null
         ]
       },
-      "/home/poyasharonlin/SOA/Project/sangria/spec/domain/entities/papers_spec.rb": {
+      "/home/poyasharonlin/SOA/Project/api-acaradar/spec/domain/entities/papers_spec.rb": {
         "lines": [
           null
         ]
       },
-      "/home/poyasharonlin/SOA/Project/sangria/spec/domain/entities/query_spec.rb": {
+      "/home/poyasharonlin/SOA/Project/api-acaradar/spec/domain/entities/query_spec.rb": {
         "lines": [
           null
         ]
       },
-      "/home/poyasharonlin/SOA/Project/sangria/spec/domain/services/embedder_spec.rb": {
+      "/home/poyasharonlin/SOA/Project/api-acaradar/spec/domain/services/embedder_spec.rb": {
         "lines": [
           null
         ]
       },
-      "/home/poyasharonlin/SOA/Project/sangria/spec/domain/services/extractor_spec.rb": {
+      "/home/poyasharonlin/SOA/Project/api-acaradar/spec/domain/services/extractor_spec.rb": {
         "lines": [
           null,
           null,
@@ -76,90 +76,90 @@
           0,
           0,
           0,
-          0,
-          null,
-          null
-        ]
-      },
-      "/home/poyasharonlin/SOA/Project/sangria/spec/infrastructure_database_spec.rb": {
-        "lines": [
-          null,
-          null,
-          1,
-          1,
-          1,
-          1,
-          null,
-          1,
-          1,
-          null,
-          1,
-          0,
-          null,
-          null,
-          1,
-          0,
-          null,
-          null,
-          1,
-          1,
-          0,
-          null,
-          null,
-          1,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          null,
-          0,
-          0,
-          0,
-          null,
-          null,
-          null,
-          null
-        ]
-      },
-      "/home/poyasharonlin/SOA/Project/sangria/spec/helpers/vcr_helper.rb": {
-        "lines": [
-          null,
-          null,
-          1,
-          1,
-          null,
-          null,
-          1,
-          1,
-          1,
-          null,
-          1,
-          1,
-          1,
-          1,
-          null,
-          null,
-          null,
-          1,
-          0,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          1,
           0,
           null,
           null
         ]
       },
-      "/home/poyasharonlin/SOA/Project/sangria/spec/helpers/database_helper.rb": {
+      "/home/poyasharonlin/SOA/Project/api-acaradar/spec/infrastructure_database_spec.rb": {
+        "lines": [
+          null,
+          null,
+          1,
+          1,
+          1,
+          1,
+          null,
+          1,
+          1,
+          null,
+          1,
+          0,
+          null,
+          null,
+          1,
+          0,
+          null,
+          null,
+          1,
+          1,
+          0,
+          null,
+          null,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          null,
+          0,
+          0,
+          0,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      "/home/poyasharonlin/SOA/Project/api-acaradar/spec/helpers/vcr_helper.rb": {
+        "lines": [
+          null,
+          null,
+          1,
+          1,
+          null,
+          null,
+          1,
+          1,
+          1,
+          null,
+          1,
+          1,
+          1,
+          1,
+          null,
+          null,
+          null,
+          1,
+          0,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          1,
+          0,
+          null,
+          null
+        ]
+      },
+      "/home/poyasharonlin/SOA/Project/api-acaradar/spec/helpers/database_helper.rb": {
         "lines": [
           null,
           null,
@@ -177,6 +177,6 @@
         ]
       }
     },
-    "timestamp": 1763276269
+    "timestamp": 1763798945
   }
 }
