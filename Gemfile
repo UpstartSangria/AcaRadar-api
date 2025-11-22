@@ -66,5 +66,5 @@ gem 'rexml'
 gem 'tactful_tokenizer'
 
 # Presentation
-gem 'roar'
 gem 'multi_json'
+gem 'roar'
