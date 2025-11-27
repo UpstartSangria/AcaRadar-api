@@ -32,6 +32,15 @@ curl -X POST http://localhost:9292/api/v1/research_interest \
 # HTTP Status: 201
 ```
 
+Heroku
+```bash
+curl -X POST "https://acaradar-api-10b2af109247.herokuapp.com/api/v1/research_interest" \
+     -H "Content-Type: application/json" \
+     -d '{"term": "machine learning"}' \
+     --cookie-jar /tmp/acaradar_cookie.jar \
+     -i
+```
+
 
 ### Retrieve papers
 `GET /api/v1/papers`
