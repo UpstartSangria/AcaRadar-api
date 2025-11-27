@@ -42,9 +42,7 @@ module AcaRadar
 
             if result.failure?
               response.status = 422
-              return Response::UnprocessableEntity.new(
-                Representer::Error.generic('Failed to embed research interest')
-              ).to_json
+              return Representer::Error.generic('Failed to embed research interest').to_json
             end
 
             session[:research_interest_term] = request_obj.term
