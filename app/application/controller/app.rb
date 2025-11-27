@@ -17,7 +17,7 @@ module AcaRadar
            secret: ENV.fetch('SESSION_SECRET', 'test_secret_at_least_64_bytes_long_for_security_purposes_in_production')
     
     APP_LOGGER = Logger.new(STDOUT)
-    APP_LOGGER.level = Logger::VERBOSE
+    APP_LOGGER.level = Logger::DEBUG
 
     route do |routing|
       response['Content-Type'] = 'application/json'
