@@ -36,9 +36,7 @@ Heroku
 ```bash
 curl -X POST "https://acaradar-api-10b2af109247.herokuapp.com/api/v1/research_interest" \
      -H "Content-Type: application/json" \
-     -d '{"term": "machine learning"}' \
-     --cookie-jar /tmp/acaradar_cookie.jar \
-     -i
+     -d '{"term": "machine learning"}'
 ```
 
 
