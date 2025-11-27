@@ -15,8 +15,8 @@ module AcaRadar
     plugin :json_parser
     plugin :sessions,
            secret: ENV.fetch('SESSION_SECRET', 'test_secret_at_least_64_bytes_long_for_security_purposes_in_production')
-    
-    APP_LOGGER = Logger.new(STDOUT)
+
+    APP_LOGGER = Logger.new($stdout)
     APP_LOGGER.level = Logger::DEBUG
 
     route do |routing|
@@ -33,7 +33,7 @@ module AcaRadar
         # POST /api/v1/research_interest
         routing.on 'research_interest' do
           routing.post do
-            APP_LOGGER.info("Received POST request to /api/v1/research_interest")
+            APP_LOGGER.info('Received POST request to /api/v1/research_interest')
             APP_LOGGER.info("Request parameters (routing.params): #{routing.params.inspect}")
             request_obj = Request::EmbedResearchInterest.new(routing.params)
             APP_LOGGER.info("Initialized Request::EmbedResearchInterest with: #{request_obj.inspect}")
