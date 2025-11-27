@@ -3,6 +3,7 @@
 require 'rack'
 require 'roda'
 require 'ostruct'
+require 'logger'
 
 # rubocop:disable Metrics/BlockLength
 module AcaRadar
@@ -14,6 +15,9 @@ module AcaRadar
     plugin :json_parser
     plugin :sessions,
            secret: ENV.fetch('SESSION_SECRET', 'test_secret_at_least_64_bytes_long_for_security_purposes_in_production')
+    
+    APP_LOGGER = Logger.new(STDOUT)
+    APP_LOGGER.level = Logger::VERBOSE
 
     route do |routing|
       response['Content-Type'] = 'application/json'
@@ -29,24 +33,33 @@ module AcaRadar
         # POST /api/v1/research_interest
         routing.on 'research_interest' do
           routing.post do
+            APP_LOGGER.info("Received POST request to /api/v1/research_interest")
+            APP_LOGGER.info("Request parameters (routing.params): #{routing.params.inspect}")
             request_obj = Request::EmbedResearchInterest.new(routing.params)
+            APP_LOGGER.info("Initialized Request::EmbedResearchInterest with: #{request_obj.inspect}")
 
             unless request_obj.valid?
+              APP_LOGGER.warn("Request::EmbedResearchInterest validation failed for term: '#{request_obj.term}'")
               response.status = 400
               return Response::BadRequest.new(
                 Representer::Error.generic('Research interest must be a non-empty string')
               ).to_json
             end
+            APP_LOGGER.info("Request::EmbedResearchInterest is valid. Term: '#{request_obj.term}'")
 
             result = Service::EmbedResearchInterest.new.call(term: request_obj.term)
+            APP_LOGGER.info("Service::EmbedResearchInterest call result: #{result.inspect}")
 
             if result.failure?
+              APP_LOGGER.error("Service::EmbedResearchInterest failed. Result: #{result.inspect}")
               response.status = 422
               return Representer::Error.generic('Failed to embed research interest').to_json
             end
+            APP_LOGGER.info("Service::EmbedResearchInterest succeeded. Value: #{result.value!.inspect}")
 
             session[:research_interest_term] = request_obj.term
             session[:research_interest_2d]   = result.value!
+            APP_LOGGER.info("Session updated with term: '#{request_obj.term}' and 2D vector: #{result.value!.inspect}")
 
             research_interest = OpenStruct.new(
               term: request_obj.term,
