@@ -47,6 +47,6 @@ jobs:
       - name: Setup test database
         env: # define secrets in Github project -> settings -> secrets
             DB_FILENAME: ${{ secrets.DB_FILENAME }}
-        run: RACK_ENV=production bundle exec rake db:migrate
+        run: RACK_ENV=test bundle exec rake db:migrate
 
       
