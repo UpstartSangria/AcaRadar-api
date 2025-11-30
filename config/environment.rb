@@ -15,7 +15,7 @@ module AcaRadar
       configure :development, :test do
         Figaro.application = Figaro::Application.new(
           environment:,
-          path: File.expand_path('config/secrets.yml')
+          path: File.expand_path('config/secrets_example.yml')
         )
         Figaro.load
         def self.config = Figaro.env
