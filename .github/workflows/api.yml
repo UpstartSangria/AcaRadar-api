@@ -51,6 +51,10 @@ jobs:
       - name: Ensure database directory exists
         run: mkdir -p $(dirname ${{ secrets.DB_FILENAME }})
 
+      # Debug secret length
+      - name: Verify Secret Length
+        run: echo "The session secret length is ${{ env.SESSION_SECRET.length }}"
+
       - name: Setup test database
         run: bundle exec rake db:migrate
       

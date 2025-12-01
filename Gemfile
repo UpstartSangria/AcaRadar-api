@@ -64,6 +64,7 @@ gem 'engtagger'
 gem 'nokogiri'
 gem 'rexml'
 gem 'tactful_tokenizer'
+gem 'ostruct'
 
 # Presentation
 gem 'multi_json'
