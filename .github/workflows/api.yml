@@ -53,7 +53,7 @@ jobs:
 
       # Debug secret length
       - name: Verify Secret Length
-        run: echo "The session secret length is ${{ env.SESSION_SECRET.length }}"
+        run: echo "The session secret length is ${{ secrets.SESSION_SECRET.length }}"
 
       - name: Setup test database
         run: bundle exec rake db:migrate
