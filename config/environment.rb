@@ -19,7 +19,8 @@ module AcaRadar
         )
         Figaro.load
         def self.config = Figaro.env
-        use Rack::Session::Cookie, secret: config.SESSION_SECRET
+        # use scecret set by the env, use fall back
+        use Rack::Session::Cookie, secret: ENV.fetch('SESSION_SECRET', config.SESSION_SECRET)
         CONFIG = YAML.safe_load_file('config/secrets_example.yml')
         ENV['DATABASE_URL'] ||= "sqlite://#{config.DB_FILENAME}"
       end
