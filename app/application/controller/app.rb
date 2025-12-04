@@ -4,6 +4,7 @@ require 'rack'
 require 'roda'
 require 'ostruct'
 require 'logger'
+require 'digest'
 
 # rubocop:disable Metrics/BlockLength
 module AcaRadar
@@ -99,6 +100,26 @@ module AcaRadar
               journals: request_obj.journals,
               papers: list
             )
+
+            cache_ttl = 300 # seconds
+
+            # we key the ETag on journals + page + research term
+            cache_key_string = [
+              request_obj.journals.sort.join(','),
+              request_obj.page,
+              session[:research_interest_term]
+            ].join('|')
+
+            etag_value = Digest::SHA256.hexdigest(cache_key_string)
+
+            response['Cache-Control'] = "public, max-age=#{cache_ttl}"
+            response['ETag']          = %("#{etag_value}")
+
+            # the client/proxy does the conditional GETs
+            if env['HTTP_IF_NONE_MATCH'] == %("#{etag_value}")
+              response.status = 304
+              routing.halt
+            end
 
             Representer::PapersPageResponse.new(response_obj).to_json
           end

@@ -4,6 +4,7 @@ source 'https://rubygems.org'
 
 # Configuration
 gem 'figaro', '~> 1.0'
+gem 'openssl', '~> 3.3.1'
 
 # Global Debugging
 gem 'pry'
@@ -72,3 +73,8 @@ gem 'roar'
 
 # API testing
 gem 'rack-test'
+
+# API Cache
+
+gem 'rack-cache'
+gem 'redis'
