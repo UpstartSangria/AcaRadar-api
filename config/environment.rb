@@ -34,6 +34,7 @@ module AcaRadar
       # CI uses GitHub Action secrets
       def self.config = ENV
 
+      CONFIG = {} #hotfix because the tests require it
       use Rack::Session::Cookie, secret: ENV.fetch('SESSION_SECRET')
       ENV['DATABASE_URL'] ||= "sqlite://#{ENV['DB_FILENAME']}"
     end
@@ -44,6 +45,7 @@ module AcaRadar
     configure :production do
       def self.config = ENV
 
+      CONFIG = {} #hotfix because the tests require it
       use Rack::Session::Cookie, secret: ENV.fetch('SESSION_SECRET')
     end
 
