@@ -2,11 +2,11 @@
 
 name: API continuous integration
 
-# Controls when the action will run. 
+# Controls when the action will run.
 on:
-  # Triggers the workflow on git push
+  # Triggers the workflow on any git push
   push:
-  # Triggers workflow for or any branch on pull requests
+  # Triggers workflow for any branch on pull requests
   pull_request:
     branches:
       - '**'
@@ -20,48 +20,75 @@ jobs:
     strategy:
       # don't cancel other jobs if one fails
       fail-fast: false
+      # tests must be run on both Ubuntu & macOS
       matrix:
         os: [ubuntu, macos]
-    runs-on: ${{ matrix.os }}-latest  # Runs on latest builds of matrix OSes
+
+    runs-on: ${{ matrix.os }}-latest
+
+    # Environment variables available to every step
     env:
-      BUNDLE_WITHOUT: production # skip installing production gem (pg)
+      # Skip installing production gems (e.g., pg)
+      BUNDLE_WITHOUT: production
+
+      # Run app in test environment
       RACK_ENV: test
+
+      # SQLite database file for tests
+      DB_FILENAME: ${{ secrets.DB_FILENAME }}
       DATABASE_URL: sqlite://${{ github.workspace }}/${{ secrets.DB_FILENAME }}
-      
 
+      # AWS & SQS configuration for Shoryuken background worker
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      SQS_QUEUE_URL: ${{ secrets.SQS_QUEUE_URL }}
+      SQS_QUEUE_NAME: ${{ secrets.SQS_QUEUE_NAME }}
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
+      # Session secret for Rack
+      SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      # Checks-out your repository under $GITHUB_WORKSPACE
       - uses: actions/checkout@v4
     
-      # Builds on a predefined action that has Ruby installed 
+      # Sets up Ruby with Bundler caching
       - uses: ruby/setup-ruby@v1
         with:
-          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+          bundler-cache: true
 
-      # Debug env
+      # Debug: Verify important variables exist
       - name: Debug Environment Variables
-        run: | 
-          echo "Workspace is: ${{ github.workspace }}"
-          echo "DB Filename is: ${{ secrets.DB_FILENAME }}"
-          echo "DATABASE_URL is: $DATABASE_URL"
-      
-      # Debug database directory
+        run: |
+          echo "Workspace: ${{ github.workspace }}"
+          echo "DB Filename: $DB_FILENAME"
+          echo "DATABASE_URL: $DATABASE_URL"
+          echo "AWS Region: $AWS_REGION"
+          echo "Queue Name: $SQS_QUEUE_NAME"
+
+      # Ensure database directory exists (SQLite needs it)
       - name: Ensure database directory exists
-        run: mkdir -p $(dirname ${{ secrets.DB_FILENAME }})
+        run: mkdir -p $(dirname "${{ secrets.DB_FILENAME }}")
 
       # Debug secret length
       - name: Verify Secret Length
         run: echo "The session secret length is ${{ secrets.SESSION_SECRET.length }}"
 
+      # Run database migrations for testing
       - name: Setup test database
         run: bundle exec rake db:migrate
-      
-      # setup test db
+
+      # Shoryuken worker in background for parallel job processing
+      # Worker must be running so specs can publish messages to SQS
+      - name: Start test worker
+        run: |
+          echo "Starting Shoryuken worker in background..."
+          rake worker:run:test &
+          # Wait a moment to ensure worker boots before running tests
+          sleep 3
+
       - name: Run all specs
         run: bundle exec rake spec
-
       
 
       

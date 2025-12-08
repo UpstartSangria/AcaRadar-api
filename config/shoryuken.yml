@@ -1,0 +1,5 @@
+aws:
+  region: <%= ENV.fetch('AWS_REGION', 'us-east-1') %>
+
+queues:
+  - <%= ENV.fetch('SQS_QUEUE_NAME', 'acaradar-research-interest-dev') %>

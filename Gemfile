@@ -75,6 +75,9 @@ gem 'roar'
 gem 'rack-test'
 
 # API Cache
-
 gem 'rack-cache'
 gem 'redis'
+
+# Parallelism
+gem 'shoryuken'
+gem 'aws-sdk-sqs'
