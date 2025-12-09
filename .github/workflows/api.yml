@@ -54,27 +54,26 @@ jobs:
     
       # Sets up Ruby with Bundler caching
       - name: Set up Ruby
-      - uses: ruby/setup-ruby@v1
+        uses: ruby/setup-ruby@v1 # Corrected indentation
         with:
           bundler-cache: true
 
       - name: Set up Python
-      - uses: actions/setup-python@v5
+        uses: actions/setup-python@v5 # Corrected indentation
         with: 
           python-version: '3.11'
-          cache: 'pip' # cacheing pip dependencies
+          cache: 'pip' # caching pip dependencies
       
       - name: Create Python virtualenv & install requirements
         run: |
           python -m venv venv
-          source venv/bin/activate
-          pip install --upgrade pip
-          pip install -r requirements.txt
-      
-      # Make sure Ruby finds venv when it spawn python process
-      - name: Prepend venv to PATH for Ruby subprocesses
-        run: echo "${{ github.workspace }}/.venv/bin" >> $GITHUB_PATH
-      
+          ./venv/bin/pip install --upgrade pip # Use direct path to pip in venv
+          ./venv/bin/pip install -r requirements.txt # Use direct path to pip in venv
+
+      # Add Python virtual environment to PATH for subsequent steps
+      - name: Add Python venv to PATH
+        run: echo "${{ github.workspace }}/venv/bin" >> $GITHUB_PATH # Corrected path and use of GITHUB_PATH
+
       # same as bin/post_compile for heroku
       - name: Run post-compile script
         run: |
@@ -94,10 +93,13 @@ jobs:
           echo "DATABASE_URL: $DATABASE_URL"
           echo "AWS Region: $AWS_REGION"
           echo "Queue Name: $SQS_QUEUE_NAME"
+          # Verify python is on PATH and correctly linked to venv
+          which python
+          python --version
 
       # Ensure database directory exists (SQLite needs it)
       - name: Ensure database directory exists
-        run: mkdir -p $(dirname "${{ secrets.DB_FILENAME }}")
+        run: mkdir -p $(dirname "${{ env.DB_FILENAME }}") # Use env.DB_FILENAME for consistency or secrets.DB_FILENAME directly
 
       # Debug secret length
       - name: Verify Secret Length
@@ -112,12 +114,27 @@ jobs:
       - name: Start test worker
         run: |
           echo "Starting Shoryuken worker in background..."
-          rake worker:run:test &
+          # Using "nohup" and "setsid" can help prevent the process from being killed
+          # when the parent shell exits, though for CI, a simple & is often sufficient
+          # if the job completes quickly. Consider 'bundle exec shoryuken -C config/shoryuken.yml -r ./config/environment.rb &'
+          # or however your shoryuken worker is typically started.
+          bundle exec rake worker:run:test &
+          # Capture the PID to kill it later if necessary, though GitHub actions
+          # generally clean up processes at job end.
+          WORKER_PID=$!
+          echo "Shoryuken worker started with PID: $WORKER_PID"
           # Wait a moment to ensure worker boots before running tests
-          sleep 3
+          sleep 5 # Increased sleep slightly
+          # Store PID in an environment variable for potential later cleanup
+          echo "WORKER_PID=$WORKER_PID" >> $GITHUB_ENV
 
       - name: Run all specs
         run: bundle exec rake spec
       
-
-      
+      # Optional: Clean up the worker process if it was started in the background
+      # This step might not be strictly necessary as GitHub Actions usually clean up.
+      - name: Stop test worker (optional cleanup)
+        if: always() && env.WORKER_PID # Run if job completes, even if tests failed
+        run: |
+          echo "Attempting to stop Shoryuken worker with PID: ${{ env.WORKER_PID }}"
+          kill ${{ env.WORKER_PID }} || true # '|| true' prevents step from failing if process already gone
