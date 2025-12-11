@@ -6290,4 +6290,448 @@ http_interactions:
           </entry>
         </feed>
   recorded_at: Mon, 08 Dec 2025 02:32:06 GMT
+- request:
+    method: get
+    uri: https://export.arxiv.org/api/query?max_results=5&search_query=submittedDate:%5B201010020000%20TO%20202512090000%5D%20AND%20(jr:%22MIS%20Quarterly%22%20OR%20jr:%22Nature%22)&sortBy=submittedDate&sortOrder=ascending&start=0
+    body:
+      encoding: ASCII-8BIT
+      string: ''
+    headers:
+      Accept:
+      - application/atom+xml
+      User-Agent:
+      - ''
+      Connection:
+      - close
+      Host:
+      - export.arxiv.org
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Connection:
+      - close
+      Content-Length:
+      - '12105'
+      Via:
+      - 1.1 varnish, 1.1 varnish, 1.1 varnish
+      Content-Type:
+      - application/atom+xml; charset=utf-8
+      Server:
+      - Google Frontend
+      X-Cloud-Trace-Context:
+      - 48eb362abadda032fad7b4d398412fac
+      Accept-Ranges:
+      - bytes
+      Age:
+      - '0'
+      Date:
+      - Tue, 09 Dec 2025 02:19:11 GMT
+      X-Served-By:
+      - cache-lga21944-LGA, cache-lga21923-LGA, cache-nrt-rjtt7900042-NRT
+      X-Cache:
+      - MISS, MISS, MISS
+      X-Cache-Hits:
+      - 0, 0, 0
+      X-Timer:
+      - S1765246751.688409,VS0,VE386
+      Strict-Transport-Security:
+      - max-age=300
+    body:
+      encoding: UTF-8
+      string: |
+        <?xml version='1.0' encoding='UTF-8'?>
+        <feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+          <id>https://arxiv.org/api/U9W3+L+hqUtOed/iQ9VgOl/ZuZk</id>
+          <title>arXiv Query: search_query=submittedDate:"201010020000 TO 202512090000" AND (jr:"MIS Quarterly" OR jr:"Nature")&amp;id_list=&amp;start=0&amp;max_results=5</title>
+          <updated>2025-12-09T02:19:10Z</updated>
+          <link href="https://arxiv.org/api/query?search_query=submittedDate:%22201010020000+TO+202512090000%22+AND+(jr:%22MIS+Quarterly%22+OR+jr:%22Nature%22)&amp;start=0&amp;max_results=5&amp;id_list=" type="application/atom+xml"/>
+          <opensearch:itemsPerPage>5</opensearch:itemsPerPage>
+          <opensearch:totalResults>6682</opensearch:totalResults>
+          <opensearch:startIndex>0</opensearch:startIndex>
+          <entry>
+            <id>http://arxiv.org/abs/1010.0436v1</id>
+            <title>Modeling the scaling properties of human mobility</title>
+            <updated>2010-10-03T19:36:19Z</updated>
+            <link href="https://arxiv.org/abs/1010.0436v1" rel="alternate" type="text/html"/>
+            <link href="https://arxiv.org/pdf/1010.0436v1" rel="related" type="application/pdf" title="pdf"/>
+            <summary>While the fat tailed jump size and the waiting time distributions characterizing individual human trajectories strongly suggest the relevance of the continuous time random walk (CTRW) models of human mobility, no one seriously believes that human traces are truly random. Given the importance of human mobility, from epidemic modeling to traffic prediction and urban planning, we need quantitative models that can account for the statistical characteristics of individual human trajectories. Here we use empirical data on human mobility, captured by mobile phone traces, to show that the predictions of the CTRW models are in systematic conflict with the empirical results. We introduce two principles that govern human trajectories, allowing us to build a statistically self-consistent microscopic model for individual human mobility. The model not only accounts for the empirically observed scaling laws but also allows us to analytically predict most of the pertinent scaling exponents.</summary>
+            <category term="cond-mat.dis-nn" scheme="http://arxiv.org/schemas/atom"/>
+            <category term="cond-mat.stat-mech" scheme="http://arxiv.org/schemas/atom"/>
+            <category term="physics.soc-ph" scheme="http://arxiv.org/schemas/atom"/>
+            <published>2010-10-03T19:36:19Z</published>
+            <arxiv:primary_category term="cond-mat.dis-nn"/>
+            <arxiv:journal_ref>Nature Physics, 2010</arxiv:journal_ref>
+            <author>
+              <name>Chaoming Song</name>
+            </author>
+            <author>
+              <name>Tal Koren</name>
+            </author>
+            <author>
+              <name>Pu Wang</name>
+            </author>
+            <author>
+              <name>Albert-László Barabási</name>
+            </author>
+            <arxiv:doi>10.1038/nphys1760</arxiv:doi>
+            <link rel="related" href="https://doi.org/10.1038/nphys1760" title="doi"/>
+          </entry>
+          <entry>
+            <id>http://arxiv.org/abs/1010.0763v2</id>
+            <title>Creation and control of a two-dimensional electron liquid at the bare SrTiO3 surface</title>
+            <updated>2011-05-08T14:50:18Z</updated>
+            <link href="https://arxiv.org/abs/1010.0763v2" rel="alternate" type="text/html"/>
+            <link href="https://arxiv.org/pdf/1010.0763v2" rel="related" type="application/pdf" title="pdf"/>
+            <summary>Many-body interactions in transition-metal oxides give rise to a wide range of functional properties, such as high-temperature superconductivity, colossal magnetoresistance, or multiferroicity. The seminal recent discovery of a two-dimensional electron gas (2DEG) at the interface of the insulating oxides LaAlO3 and SrTiO3 represents an important milestone towards exploiting such properties in all-oxide devices. This conducting interface shows a number of appealing properties, including a high electron mobility, superconductivity, and large magnetoresistance and can be patterned on the few-nanometer length scale. However, the microscopic origin of the interface 2DEG is poorly understood. Here, we show that a similar 2DEG, with an electron density as large as 8x10^13 cm^-2, can be formed at the bare SrTiO3 surface. Furthermore, we find that the 2DEG density can be controlled through exposure of the surface to intense ultraviolet (UV) light. Subsequent angle-resolved photoemission spectroscopy (ARPES) measurements reveal an unusual coexistence of a light quasiparticle mass and signatures of strong many-body interactions.</summary>
+            <category term="cond-mat.mtrl-sci" scheme="http://arxiv.org/schemas/atom"/>
+            <category term="cond-mat.str-el" scheme="http://arxiv.org/schemas/atom"/>
+            <published>2010-10-05T04:40:28Z</published>
+            <arxiv:comment>14 pages, 4 figures, supplementary information (see other files)</arxiv:comment>
+            <arxiv:primary_category term="cond-mat.mtrl-sci"/>
+            <arxiv:journal_ref>Nature Mater. 10, 114-118 (2011)</arxiv:journal_ref>
+            <author>
+              <name>W. Meevasana</name>
+            </author>
+            <author>
+              <name>P. D. C. King</name>
+            </author>
+            <author>
+              <name>R. H. He</name>
+            </author>
+            <author>
+              <name>S. -K. Mo</name>
+            </author>
+            <author>
+              <name>M. Hashimoto</name>
+            </author>
+            <author>
+              <name>A. Tamai</name>
+            </author>
+            <author>
+              <name>P. Songsiriritthigul</name>
+            </author>
+            <author>
+              <name>F. Baumberger</name>
+            </author>
+            <author>
+              <name>Z. -X. Shen</name>
+            </author>
+            <arxiv:doi>10.1038/nmat2943</arxiv:doi>
+            <link rel="related" href="https://doi.org/10.1038/nmat2943" title="doi"/>
+          </entry>
+          <entry>
+            <id>http://arxiv.org/abs/1010.0793v1</id>
+            <title>Quantum gravitational contributions to quantum electrodynamics</title>
+            <updated>2010-10-05T08:14:28Z</updated>
+            <link href="https://arxiv.org/abs/1010.0793v1" rel="alternate" type="text/html"/>
+            <link href="https://arxiv.org/pdf/1010.0793v1" rel="related" type="application/pdf" title="pdf"/>
+            <summary>Quantum electrodynamics describes the interactions of electrons and photons. Electric charge (the gauge coupling constant) is energy dependent, and there is a previous claim that charge is affected by gravity (described by general relativity) with the implication that the charge is reduced at high energies. But that claim has been very controversial with the situation inconclusive. Here I report an analysis (free from earlier controversies) demonstrating that that quantum gravity corrections to quantum electrodynamics have a quadratic energy dependence that result in the reduction of the electric charge at high energies, a result known as asymptotic freedom.</summary>
+            <category term="hep-th" scheme="http://arxiv.org/schemas/atom"/>
+            <category term="gr-qc" scheme="http://arxiv.org/schemas/atom"/>
+            <published>2010-10-05T08:14:28Z</published>
+            <arxiv:comment>To be published in Nature. 19 pages LaTeX, no figures</arxiv:comment>
+            <arxiv:primary_category term="hep-th"/>
+            <arxiv:journal_ref>Nature 468:56-59,2010</arxiv:journal_ref>
+            <author>
+              <name>David J. Toms</name>
+            </author>
+            <arxiv:doi>10.1038/nature09506</arxiv:doi>
+            <link rel="related" href="https://doi.org/10.1038/nature09506" title="doi"/>
+          </entry>
+          <entry>
+            <id>http://arxiv.org/abs/1010.0900v1</id>
+            <title>Quantum networks reveal quantum nonlocality</title>
+            <updated>2010-10-05T14:39:13Z</updated>
+            <link href="https://arxiv.org/abs/1010.0900v1" rel="alternate" type="text/html"/>
+            <link href="https://arxiv.org/pdf/1010.0900v1" rel="related" type="application/pdf" title="pdf"/>
+            <summary>The results of local measurements on some composite quantum systems cannot be reproduced classically. This impossibility, known as quantum nonlocality, represents a milestone in the foundations of quantum theory. Quantum nonlocality is also a valuable resource for information processing tasks, e.g. quantum communication, quantum key distribution, quantum state estimation, or randomness extraction. Still, deciding if a quantum state is nonlocal remains a challenging problem. Here we introduce a novel approach to this question: we study the nonlocal properties of quantum states when distributed and measured in networks. Using our framework, we show how any one-way entanglement distillable state leads to nonlocal correlations. Then, we prove that nonlocality is a non-additive resource, which can be activated. There exist states, local at the single-copy level, that become nonlocal when taking several copies of it. Our results imply that the nonlocality of quantum states strongly depends on the measurement context.</summary>
+            <category term="quant-ph" scheme="http://arxiv.org/schemas/atom"/>
+            <published>2010-10-05T14:39:13Z</published>
+            <arxiv:comment>4 + 3 pages, 4 figures</arxiv:comment>
+            <arxiv:primary_category term="quant-ph"/>
+            <arxiv:journal_ref>Nature Communications 2, 184 (2011)</arxiv:journal_ref>
+            <author>
+              <name>D. Cavalcanti</name>
+            </author>
+            <author>
+              <name>M. L. Almeida</name>
+            </author>
+            <author>
+              <name>V. Scarani</name>
+            </author>
+            <author>
+              <name>A. Acin</name>
+            </author>
+            <arxiv:doi>10.1038/ncomms1193</arxiv:doi>
+            <link rel="related" href="https://doi.org/10.1038/ncomms1193" title="doi"/>
+          </entry>
+          <entry>
+            <id>http://arxiv.org/abs/1010.1262v2</id>
+            <title>High star formation rates as the origin of turbulence in early and modern disk galaxies</title>
+            <updated>2010-10-13T06:07:03Z</updated>
+            <link href="https://arxiv.org/abs/1010.1262v2" rel="alternate" type="text/html"/>
+            <link href="https://arxiv.org/pdf/1010.1262v2" rel="related" type="application/pdf" title="pdf"/>
+            <summary>High spatial and spectral resolution observations of star formation and kinematics in early galaxies have shown that two-thirds are massive rotating disk galaxies with the remainder being less massive non-rotating objects. The line of sight averaged velocity dispersions are typically five times higher than in today's disk galaxies. This has suggested that gravitationally-unstable, gas-rich disks in the early Universe are fuelled by cold, dense accreting gas flowing along cosmic filaments and penetrating hot galactic gas halos. However these accreting flows have not been observed, and cosmic accretion cannot power the observed level of turbulence. Here we report on a new sample of rare high-velocity-dispersion disk galaxies we have discovered in the nearby Universe where cold accretion is unlikely to drive their high star-formation rates. We find that the velocity dispersion is most fundamentally correlated with their star-formation rates, and not their mass nor gas fraction, which leads to a new picture where star formation itself is the energetic driver of galaxy disk turbulence at all cosmic epochs.</summary>
+            <category term="astro-ph.GA" scheme="http://arxiv.org/schemas/atom"/>
+            <category term="astro-ph.CO" scheme="http://arxiv.org/schemas/atom"/>
+            <published>2010-10-06T20:21:58Z</published>
+            <arxiv:comment>9 pages, 2 figures, Supplimentary Info available at: http://pulsar.swin.edu.au/~agreen/nature/sigma_mean_arXiv.pdf. Accepted for publication in Nature</arxiv:comment>
+            <arxiv:primary_category term="astro-ph.GA"/>
+            <arxiv:journal_ref>Nature (2010) 467, 684</arxiv:journal_ref>
+            <author>
+              <name>Andrew W. Green</name>
+            </author>
+            <author>
+              <name>Karl Glazebrook</name>
+            </author>
+            <author>
+              <name>Peter J. McGregor</name>
+            </author>
+            <author>
+              <name>Roberto G. Abraham</name>
+            </author>
+            <author>
+              <name>Gregory B. Poole</name>
+            </author>
+            <author>
+              <name>Ivana Damjanov</name>
+            </author>
+            <author>
+              <name>Patrick J. McCarthy</name>
+            </author>
+            <author>
+              <name>Matthew Colless</name>
+            </author>
+            <author>
+              <name>Robert G. Sharp</name>
+            </author>
+            <arxiv:doi>10.1038/nature09452</arxiv:doi>
+            <link rel="related" href="https://doi.org/10.1038/nature09452" title="doi"/>
+          </entry>
+        </feed>
+  recorded_at: Tue, 09 Dec 2025 02:19:11 GMT
+- request:
+    method: get
+    uri: https://export.arxiv.org/api/query?max_results=5&search_query=submittedDate:%5B201010020000%20TO%20202512110000%5D%20AND%20(jr:%22MIS%20Quarterly%22%20OR%20jr:%22Nature%22)&sortBy=submittedDate&sortOrder=ascending&start=0
+    body:
+      encoding: ASCII-8BIT
+      string: ''
+    headers:
+      Accept:
+      - application/atom+xml
+      User-Agent:
+      - ''
+      Connection:
+      - close
+      Host:
+      - export.arxiv.org
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Connection:
+      - close
+      Content-Length:
+      - '12105'
+      Via:
+      - 1.1 varnish, 1.1 varnish, 1.1 varnish
+      Content-Type:
+      - application/atom+xml; charset=utf-8
+      Server:
+      - Google Frontend
+      X-Cloud-Trace-Context:
+      - f510fe7b8d93452bb93efbb4365b847d
+      Accept-Ranges:
+      - bytes
+      Age:
+      - '0'
+      Date:
+      - Thu, 11 Dec 2025 13:12:09 GMT
+      X-Served-By:
+      - cache-lga21993-LGA, cache-lga21943-LGA, cache-sin-wsss1830026-SIN
+      X-Cache:
+      - MISS, MISS, MISS
+      X-Cache-Hits:
+      - 0, 0, 0
+      X-Timer:
+      - S1765458729.893311,VS0,VE347
+      Strict-Transport-Security:
+      - max-age=300
+    body:
+      encoding: UTF-8
+      string: |
+        <?xml version='1.0' encoding='UTF-8'?>
+        <feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+          <id>https://arxiv.org/api/vElFcrTnAcsKRllji/TociuzeeU</id>
+          <title>arXiv Query: search_query=submittedDate:"201010020000 TO 202512110000" AND (jr:"MIS Quarterly" OR jr:"Nature")&amp;id_list=&amp;start=0&amp;max_results=5</title>
+          <updated>2025-12-11T13:12:09Z</updated>
+          <link href="https://arxiv.org/api/query?search_query=submittedDate:%22201010020000+TO+202512110000%22+AND+(jr:%22MIS+Quarterly%22+OR+jr:%22Nature%22)&amp;start=0&amp;max_results=5&amp;id_list=" type="application/atom+xml"/>
+          <opensearch:itemsPerPage>5</opensearch:itemsPerPage>
+          <opensearch:totalResults>6686</opensearch:totalResults>
+          <opensearch:startIndex>0</opensearch:startIndex>
+          <entry>
+            <id>http://arxiv.org/abs/1010.0436v1</id>
+            <title>Modeling the scaling properties of human mobility</title>
+            <updated>2010-10-03T19:36:19Z</updated>
+            <link href="https://arxiv.org/abs/1010.0436v1" rel="alternate" type="text/html"/>
+            <link href="https://arxiv.org/pdf/1010.0436v1" rel="related" type="application/pdf" title="pdf"/>
+            <summary>While the fat tailed jump size and the waiting time distributions characterizing individual human trajectories strongly suggest the relevance of the continuous time random walk (CTRW) models of human mobility, no one seriously believes that human traces are truly random. Given the importance of human mobility, from epidemic modeling to traffic prediction and urban planning, we need quantitative models that can account for the statistical characteristics of individual human trajectories. Here we use empirical data on human mobility, captured by mobile phone traces, to show that the predictions of the CTRW models are in systematic conflict with the empirical results. We introduce two principles that govern human trajectories, allowing us to build a statistically self-consistent microscopic model for individual human mobility. The model not only accounts for the empirically observed scaling laws but also allows us to analytically predict most of the pertinent scaling exponents.</summary>
+            <category term="cond-mat.dis-nn" scheme="http://arxiv.org/schemas/atom"/>
+            <category term="cond-mat.stat-mech" scheme="http://arxiv.org/schemas/atom"/>
+            <category term="physics.soc-ph" scheme="http://arxiv.org/schemas/atom"/>
+            <published>2010-10-03T19:36:19Z</published>
+            <arxiv:primary_category term="cond-mat.dis-nn"/>
+            <arxiv:journal_ref>Nature Physics, 2010</arxiv:journal_ref>
+            <author>
+              <name>Chaoming Song</name>
+            </author>
+            <author>
+              <name>Tal Koren</name>
+            </author>
+            <author>
+              <name>Pu Wang</name>
+            </author>
+            <author>
+              <name>Albert-László Barabási</name>
+            </author>
+            <arxiv:doi>10.1038/nphys1760</arxiv:doi>
+            <link rel="related" href="https://doi.org/10.1038/nphys1760" title="doi"/>
+          </entry>
+          <entry>
+            <id>http://arxiv.org/abs/1010.0763v2</id>
+            <title>Creation and control of a two-dimensional electron liquid at the bare SrTiO3 surface</title>
+            <updated>2011-05-08T14:50:18Z</updated>
+            <link href="https://arxiv.org/abs/1010.0763v2" rel="alternate" type="text/html"/>
+            <link href="https://arxiv.org/pdf/1010.0763v2" rel="related" type="application/pdf" title="pdf"/>
+            <summary>Many-body interactions in transition-metal oxides give rise to a wide range of functional properties, such as high-temperature superconductivity, colossal magnetoresistance, or multiferroicity. The seminal recent discovery of a two-dimensional electron gas (2DEG) at the interface of the insulating oxides LaAlO3 and SrTiO3 represents an important milestone towards exploiting such properties in all-oxide devices. This conducting interface shows a number of appealing properties, including a high electron mobility, superconductivity, and large magnetoresistance and can be patterned on the few-nanometer length scale. However, the microscopic origin of the interface 2DEG is poorly understood. Here, we show that a similar 2DEG, with an electron density as large as 8x10^13 cm^-2, can be formed at the bare SrTiO3 surface. Furthermore, we find that the 2DEG density can be controlled through exposure of the surface to intense ultraviolet (UV) light. Subsequent angle-resolved photoemission spectroscopy (ARPES) measurements reveal an unusual coexistence of a light quasiparticle mass and signatures of strong many-body interactions.</summary>
+            <category term="cond-mat.mtrl-sci" scheme="http://arxiv.org/schemas/atom"/>
+            <category term="cond-mat.str-el" scheme="http://arxiv.org/schemas/atom"/>
+            <published>2010-10-05T04:40:28Z</published>
+            <arxiv:comment>14 pages, 4 figures, supplementary information (see other files)</arxiv:comment>
+            <arxiv:primary_category term="cond-mat.mtrl-sci"/>
+            <arxiv:journal_ref>Nature Mater. 10, 114-118 (2011)</arxiv:journal_ref>
+            <author>
+              <name>W. Meevasana</name>
+            </author>
+            <author>
+              <name>P. D. C. King</name>
+            </author>
+            <author>
+              <name>R. H. He</name>
+            </author>
+            <author>
+              <name>S. -K. Mo</name>
+            </author>
+            <author>
+              <name>M. Hashimoto</name>
+            </author>
+            <author>
+              <name>A. Tamai</name>
+            </author>
+            <author>
+              <name>P. Songsiriritthigul</name>
+            </author>
+            <author>
+              <name>F. Baumberger</name>
+            </author>
+            <author>
+              <name>Z. -X. Shen</name>
+            </author>
+            <arxiv:doi>10.1038/nmat2943</arxiv:doi>
+            <link rel="related" href="https://doi.org/10.1038/nmat2943" title="doi"/>
+          </entry>
+          <entry>
+            <id>http://arxiv.org/abs/1010.0793v1</id>
+            <title>Quantum gravitational contributions to quantum electrodynamics</title>
+            <updated>2010-10-05T08:14:28Z</updated>
+            <link href="https://arxiv.org/abs/1010.0793v1" rel="alternate" type="text/html"/>
+            <link href="https://arxiv.org/pdf/1010.0793v1" rel="related" type="application/pdf" title="pdf"/>
+            <summary>Quantum electrodynamics describes the interactions of electrons and photons. Electric charge (the gauge coupling constant) is energy dependent, and there is a previous claim that charge is affected by gravity (described by general relativity) with the implication that the charge is reduced at high energies. But that claim has been very controversial with the situation inconclusive. Here I report an analysis (free from earlier controversies) demonstrating that that quantum gravity corrections to quantum electrodynamics have a quadratic energy dependence that result in the reduction of the electric charge at high energies, a result known as asymptotic freedom.</summary>
+            <category term="hep-th" scheme="http://arxiv.org/schemas/atom"/>
+            <category term="gr-qc" scheme="http://arxiv.org/schemas/atom"/>
+            <published>2010-10-05T08:14:28Z</published>
+            <arxiv:comment>To be published in Nature. 19 pages LaTeX, no figures</arxiv:comment>
+            <arxiv:primary_category term="hep-th"/>
+            <arxiv:journal_ref>Nature 468:56-59,2010</arxiv:journal_ref>
+            <author>
+              <name>David J. Toms</name>
+            </author>
+            <arxiv:doi>10.1038/nature09506</arxiv:doi>
+            <link rel="related" href="https://doi.org/10.1038/nature09506" title="doi"/>
+          </entry>
+          <entry>
+            <id>http://arxiv.org/abs/1010.0900v1</id>
+            <title>Quantum networks reveal quantum nonlocality</title>
+            <updated>2010-10-05T14:39:13Z</updated>
+            <link href="https://arxiv.org/abs/1010.0900v1" rel="alternate" type="text/html"/>
+            <link href="https://arxiv.org/pdf/1010.0900v1" rel="related" type="application/pdf" title="pdf"/>
+            <summary>The results of local measurements on some composite quantum systems cannot be reproduced classically. This impossibility, known as quantum nonlocality, represents a milestone in the foundations of quantum theory. Quantum nonlocality is also a valuable resource for information processing tasks, e.g. quantum communication, quantum key distribution, quantum state estimation, or randomness extraction. Still, deciding if a quantum state is nonlocal remains a challenging problem. Here we introduce a novel approach to this question: we study the nonlocal properties of quantum states when distributed and measured in networks. Using our framework, we show how any one-way entanglement distillable state leads to nonlocal correlations. Then, we prove that nonlocality is a non-additive resource, which can be activated. There exist states, local at the single-copy level, that become nonlocal when taking several copies of it. Our results imply that the nonlocality of quantum states strongly depends on the measurement context.</summary>
+            <category term="quant-ph" scheme="http://arxiv.org/schemas/atom"/>
+            <published>2010-10-05T14:39:13Z</published>
+            <arxiv:comment>4 + 3 pages, 4 figures</arxiv:comment>
+            <arxiv:primary_category term="quant-ph"/>
+            <arxiv:journal_ref>Nature Communications 2, 184 (2011)</arxiv:journal_ref>
+            <author>
+              <name>D. Cavalcanti</name>
+            </author>
+            <author>
+              <name>M. L. Almeida</name>
+            </author>
+            <author>
+              <name>V. Scarani</name>
+            </author>
+            <author>
+              <name>A. Acin</name>
+            </author>
+            <arxiv:doi>10.1038/ncomms1193</arxiv:doi>
+            <link rel="related" href="https://doi.org/10.1038/ncomms1193" title="doi"/>
+          </entry>
+          <entry>
+            <id>http://arxiv.org/abs/1010.1262v2</id>
+            <title>High star formation rates as the origin of turbulence in early and modern disk galaxies</title>
+            <updated>2010-10-13T06:07:03Z</updated>
+            <link href="https://arxiv.org/abs/1010.1262v2" rel="alternate" type="text/html"/>
+            <link href="https://arxiv.org/pdf/1010.1262v2" rel="related" type="application/pdf" title="pdf"/>
+            <summary>High spatial and spectral resolution observations of star formation and kinematics in early galaxies have shown that two-thirds are massive rotating disk galaxies with the remainder being less massive non-rotating objects. The line of sight averaged velocity dispersions are typically five times higher than in today's disk galaxies. This has suggested that gravitationally-unstable, gas-rich disks in the early Universe are fuelled by cold, dense accreting gas flowing along cosmic filaments and penetrating hot galactic gas halos. However these accreting flows have not been observed, and cosmic accretion cannot power the observed level of turbulence. Here we report on a new sample of rare high-velocity-dispersion disk galaxies we have discovered in the nearby Universe where cold accretion is unlikely to drive their high star-formation rates. We find that the velocity dispersion is most fundamentally correlated with their star-formation rates, and not their mass nor gas fraction, which leads to a new picture where star formation itself is the energetic driver of galaxy disk turbulence at all cosmic epochs.</summary>
+            <category term="astro-ph.GA" scheme="http://arxiv.org/schemas/atom"/>
+            <category term="astro-ph.CO" scheme="http://arxiv.org/schemas/atom"/>
+            <published>2010-10-06T20:21:58Z</published>
+            <arxiv:comment>9 pages, 2 figures, Supplimentary Info available at: http://pulsar.swin.edu.au/~agreen/nature/sigma_mean_arXiv.pdf. Accepted for publication in Nature</arxiv:comment>
+            <arxiv:primary_category term="astro-ph.GA"/>
+            <arxiv:journal_ref>Nature (2010) 467, 684</arxiv:journal_ref>
+            <author>
+              <name>Andrew W. Green</name>
+            </author>
+            <author>
+              <name>Karl Glazebrook</name>
+            </author>
+            <author>
+              <name>Peter J. McGregor</name>
+            </author>
+            <author>
+              <name>Roberto G. Abraham</name>
+            </author>
+            <author>
+              <name>Gregory B. Poole</name>
+            </author>
+            <author>
+              <name>Ivana Damjanov</name>
+            </author>
+            <author>
+              <name>Patrick J. McCarthy</name>
+            </author>
+            <author>
+              <name>Matthew Colless</name>
+            </author>
+            <author>
+              <name>Robert G. Sharp</name>
+            </author>
+            <arxiv:doi>10.1038/nature09452</arxiv:doi>
+            <link rel="related" href="https://doi.org/10.1038/nature09452" title="doi"/>
+          </entry>
+        </feed>
+  recorded_at: Thu, 11 Dec 2025 13:12:09 GMT
 recorded_with: VCR 6.3.1
