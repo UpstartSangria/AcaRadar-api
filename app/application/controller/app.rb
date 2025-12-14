@@ -36,20 +36,42 @@ module AcaRadar
           # POST /api/v1/research_interest
           routing.post do
             request_obj = Request::EmbedResearchInterest.new(routing.params)
-
             standard_response(:bad_request, 'Research interest must be a non-empty string') unless request_obj.valid?
 
             result = Service::EmbedResearchInterest.new.call(term: request_obj.term)
-
             standard_response(:cannot_process, 'Failed to embed research interest') if result.failure?
 
-            # Store in session
-            session[:research_interest_term] = request_obj.term
-            session[:research_interest_2d]   = result.value!
+            # Service now returns a payload hash:
+            # { term:, embedding:, vector_2d: } (but be robust to old shapes)
+            payload = result.value!
 
-            # Prepare data
+            vector_2d =
+              if payload.is_a?(Hash)
+                payload[:vector_2d] || payload['vector_2d']
+              else
+                payload
+              end
+
+            term =
+              if payload.is_a?(Hash)
+                payload[:term] || payload['term'] || request_obj.term
+              else
+                request_obj.term
+              end
+
+            embedding =
+              if payload.is_a?(Hash)
+                payload[:embedding] || payload['embedding']
+              end
+
+            # Store in session (only store embedding if present)
+            session[:research_interest_term] = term
+            session[:research_interest_embedding] = embedding if embedding
+            session[:research_interest_2d] = vector_2d
+
+            # Prepare data for response (Representer expects vector_2d, not the whole payload)
             data = Representer::ResearchInterest.new(
-              OpenStruct.new(term: request_obj.term, vector_2d: result.value!)
+              OpenStruct.new(term: term, vector_2d: vector_2d)
             )
 
             standard_response(:created, 'Research interest created', data)
@@ -59,11 +81,9 @@ module AcaRadar
           routing.on 'async' do
             routing.post do
               request_obj = Request::EmbedResearchInterest.new(routing.params)
-
               standard_response(:bad_request, 'Research interest must be a non-empty string') unless request_obj.valid?
 
               result = Service::QueueResearchInterestEmbedding.new.call(term: request_obj.term)
-
               standard_response(:internal_error, 'Failed to queue embedding job') if result.failure?
 
               job_id = result.value!
@@ -80,7 +100,6 @@ module AcaRadar
           # GET /api/v1/research_interest/:job_id
           routing.get String do |job_id|
             job = Repository::ResearchInterestJob.find(job_id)
-
             standard_response(:not_found, 'Job not found') unless job
 
             case job.status
@@ -118,9 +137,9 @@ module AcaRadar
 
             result = Service::ListPapers.new.call(
               journals: request_obj.journals,
-              page: request_obj.page
+              page: request_obj.page,
+              research_embedding: session[:research_interest_embedding]
             )
-
             standard_response(:internal_error, 'Failed to list papers') if result.failure?
 
             list = result.value!

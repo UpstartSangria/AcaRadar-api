@@ -119,6 +119,24 @@ module AcaRadar
 
         JSON.parse(json_str)
       end
+
+      def self.origin_id_and_embeddings
+        Database::PaperOrm.select(:origin_id, :embedding).all.map do |r|
+          raw = r.embedding || '[]'
+          emb = raw.is_a?(String) ? JSON.parse(raw) : raw
+          emb = Array(emb).map(&:to_f)
+          { origin_id: r.origin_id, embedding: emb }
+        rescue JSON::ParserError
+          # skip broken embedding rows safely
+          nil
+        end.compact
+      end
+      
+      def self.update_two_dim_embedding(origin_id, two_dim)
+        Database::PaperOrm.where(origin_id: origin_id).update(
+          two_dim_embedding: JSON.generate(Array(two_dim))
+        )
+      end
     end
   end
 end

@@ -18,6 +18,7 @@ module AcaRadar
       attr_reader :origin_id, :title, :published, :updated, :summary, :short_summary,
                   :authors, :categories, :links, :journal_ref, :concepts, :embedding,
                   :two_dim_embedding, :fetched_at
+      attr_accessor :similarity_score
 
       def initialize(paper_hash)
         @origin_id = paper_hash['id'] || paper_hash[:origin_id]

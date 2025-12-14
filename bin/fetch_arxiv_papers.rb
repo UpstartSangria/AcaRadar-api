@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require 'open3'
+require 'json'
+
 require_relative '../config/environment'
 require_relative '../app/infrastructure/arxiv/gateways/arxiv_api'
 require_relative '../app/presentation/view_objects/journal_options'
@@ -14,7 +17,6 @@ require_relative '../app/infrastructure/database/repositories/papers'
 # rubocop:disable Metrics/AbcSize
 # rubocop:disable Metrics/MethodLength
 module AcaRadar
-  # Fetch data from api call and store in db
   class ArxivFetcher
     def initialize
       @api = ArXivApi.new
@@ -25,9 +27,12 @@ module AcaRadar
       @journals.each do |journal|
         query = Query.new(journals: [journal[0]])
         fetch_and_process(query)
-        sleep 5 # respect rate limit
+        sleep 5
       end
+
       puts 'Fetched and processed papers for all journals.'
+      fit_pca_and_backfill_two_dim_embeddings!
+      puts 'PCA fitted and 2D embeddings backfilled.'
     end
 
     private
@@ -38,12 +43,10 @@ module AcaRadar
 
       api_response.papers.each do |paper|
         begin
-          # pre-compute everything
           concepts = Entity::Concept.extract_from(paper.summary.full_summary)
           embedding = Value::Embedding.embed_from(concepts.map(&:to_s).join(', '))
-          two_dim_embedding = Value::TwoDimEmbedding.reduce_dimension_from(embedding.full_embedding)
 
-          # store pre-computed fields
+          # IMPORTANT: do NOT compute 2D here anymore
           Repository::Paper.create_or_update(
             origin_id: paper.origin_id,
             title: paper.title,
@@ -53,17 +56,64 @@ module AcaRadar
             short_summary: paper.summary.short_summary,
             concepts: concepts.map(&:to_s),
             embedding: embedding.full_embedding,
-            two_dim_embedding: two_dim_embedding.two_dim_embedding,
+            two_dim_embedding: [], # placeholder; will be backfilled after PCA fit
             categories: paper.categories,
             links: paper.links,
             fetched_at: Time.now
           )
+        rescue StandardError => e
+          puts "Error processing paper #{paper.origin_id}: #{e.message}. Skipping paper."
         end
-      rescue StandardError => e
-        puts "Error processing paper #{paper.origin_id}: #{e.message}. Skipping paper."
       end
     rescue StandardError => e
       puts "Error fetching for arXiv api: #{e.message}. Skipping."
+    end
+
+    def fit_pca_and_backfill_two_dim_embeddings!
+      pairs = Repository::Paper.origin_id_and_embeddings
+
+      # Keep only valid embeddings with consistent dimension
+      pairs = pairs.select { |p| p[:embedding].is_a?(Array) && p[:embedding].length >= 2 }
+      return puts('Not enough embeddings to fit PCA (need >= 2).') if pairs.length < 2
+
+      dim = pairs.first[:embedding].length
+      pairs = pairs.select { |p| p[:embedding].length == dim }
+
+      return puts('Not enough consistent-dimension embeddings to fit PCA.') if pairs.length < 2
+
+      embeddings = pairs.map { |p| p[:embedding] }
+
+      dim_reducer_path = ENV['DIM_REDUCER_PATH'] || 'app/domain/clustering/services/dimension_reducer.py'
+      mean_path = ENV['PCA_MEAN_PATH'] || 'app/domain/clustering/services/pca_mean.json'
+      comp_path = ENV['PCA_COMPONENTS_PATH'] || 'app/domain/clustering/services/pca_components.json'
+
+      stdout, stderr, status = Open3.capture3(
+        { 'PCA_MEAN_PATH' => mean_path, 'PCA_COMPONENTS_PATH' => comp_path },
+        'python3', dim_reducer_path,
+        '--fit',
+        '--mean-path', mean_path,
+        '--components-path', comp_path,
+        stdin_data: embeddings.to_json
+      )
+
+      unless status.success?
+        raise "PCA fitting failed (dimension_reducer.py): #{stderr}"
+      end
+
+      coords = JSON.parse(stdout)
+      unless coords.is_a?(Array) && coords.length == pairs.length
+        raise "PCA fitting returned unexpected output shape: expected #{pairs.length} rows, got #{coords.length}"
+      end
+
+      # Backfill 2D embeddings in DB
+      pairs.each_with_index do |p, i|
+        xy = coords[i]
+        next unless xy.is_a?(Array) && xy.length == 2
+
+        Repository::Paper.update_two_dim_embedding(p[:origin_id], xy)
+      end
+    rescue JSON::ParserError => e
+      raise "Failed to parse PCA output JSON: #{e.message}"
     end
   end
 end
