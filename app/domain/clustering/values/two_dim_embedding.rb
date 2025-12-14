@@ -4,9 +4,7 @@ require 'open3'
 require 'json'
 
 module AcaRadar
-  # Value objects depending on Domain Entity
   module Value
-    # Represents 2Dembedding reduced from embedding objects
     class TwoDimEmbedding
       attr_reader :two_dim_embedding
 
@@ -22,16 +20,23 @@ module AcaRadar
         input = embedding.to_json
         dim_reducer_path = ENV['DIM_REDUCER_PATH'] || 'app/domain/clustering/services/dimension_reducer.py'
 
-        stdout, stderr, status = Open3.capture3('python3', dim_reducer_path, stdin_data: input)
+        mean_path = ENV['PCA_MEAN_PATH'] || 'app/domain/clustering/services/pca_mean.json'
+        comp_path = ENV['PCA_COMPONENTS_PATH'] || 'app/domain/clustering/services/pca_components.json'
 
-        raise "Python script failed: #{stderr}" unless status.success?
+        stdout, stderr, status = Open3.capture3(
+          { 'PCA_MEAN_PATH' => mean_path, 'PCA_COMPONENTS_PATH' => comp_path },
+          'python3', dim_reducer_path,
+          '--mean-path', mean_path,
+          '--components-path', comp_path,
+          stdin_data: input
+        )
 
-        begin
-          parsed_json = JSON.parse(stdout)
-          new(parsed_json)
-        rescue JSON::ParserError => e
-          raise "Failed to parse JSON from embedder.py: #{e.message}"
-        end
+        raise "Python dimension_reducer.py failed: #{stderr}" unless status.success?
+
+        parsed_json = JSON.parse(stdout)
+        new(parsed_json)
+      rescue JSON::ParserError => e
+        raise "Failed to parse JSON from dimension_reducer.py: #{e.message}"
       end
     end
   end
