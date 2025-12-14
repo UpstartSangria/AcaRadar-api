@@ -119,12 +119,12 @@ describe 'Test AcaRadar API v1 routes' do
   # worker tests
   describe 'POST /api/v1/research_interest/async' do
     it 'HAPPY: should queue job and return job_id' do
-      job_id = 'job_12345'
+      channel_id = 'job_12345'
 
       queue_service = Object.new
       queue_service.extend(Dry::Monads[:result])
       queue_service.define_singleton_method(:call) do |term:|
-        Success(job_id)
+        Success(channel_id)
       end
 
       AcaRadar::Service::QueueResearchInterestEmbedding.stub :new, ->(*) { queue_service } do
