@@ -38,43 +38,26 @@ module AcaRadar
             request_obj = Request::EmbedResearchInterest.new(routing.params)
             standard_response(:bad_request, 'Research interest must be a non-empty string') unless request_obj.valid?
 
-            result = Service::EmbedResearchInterest.new.call(term: request_obj.term)
-            standard_response(:cannot_process, 'Failed to embed research interest') if result.failure?
+            request_id = [request_obj, Time.now.to_f].hash.to_s
 
-            # Service now returns a payload hash:
-            # { term:, embedding:, vector_2d: } (but be robust to old shapes)
-            payload = result.value!
-
-            vector_2d =
-              if payload.is_a?(Hash)
-                payload[:vector_2d] || payload['vector_2d']
-              else
-                payload
+            Thread.new do
+              begin
+                Service::EmbedResearchInterest.new.call(
+                  term: request_obj.term,
+                  request_id: request_id
+                )
+              rescue StandardError => e
+                APP_LOGGER.error "BACKGROUND_JOB_ERROR: #{e.message}"
+                APP_LOGGER.error e.backtrace.join("\n")
               end
+            end
 
-            term =
-              if payload.is_a?(Hash)
-                payload[:term] || payload['term'] || request_obj.term
-              else
-                request_obj.term
-              end
-
-            embedding =
-              if payload.is_a?(Hash)
-                payload[:embedding] || payload['embedding']
-              end
-
-            # Store in session (only store embedding if present)
-            session[:research_interest_term] = term
-            session[:research_interest_embedding] = embedding if embedding
-            session[:research_interest_2d] = vector_2d
-
-            # Prepare data for response (Representer expects vector_2d, not the whole payload)
-            data = Representer::ResearchInterest.new(
-              OpenStruct.new(term: term, vector_2d: vector_2d)
-            )
-
-            standard_response(:created, 'Research interest created', data)
+            data = { 
+              message: 'Processing started', 
+              request_id: request_id 
+            }
+            
+            standard_response(:processing, 'Research interest processing started', data)
           end
 
           # POST /api/v1/research_interest/async
