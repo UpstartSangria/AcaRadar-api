@@ -41,20 +41,22 @@ module AcaRadar
             request_id = [request_obj, Time.now.to_f].hash.to_s
 
             Thread.new do
-              Service::EmbedResearchInterest.new.call(
-                term: request_obj.term,
-                request_id: request_id
-              )
-            rescue StandardError => e
-              APP_LOGGER.error "BACKGROUND_JOB_ERROR: #{e.message}"
-              APP_LOGGER.error e.backtrace.join("\n")
+              begin
+                Service::EmbedResearchInterest.new.call(
+                  term: request_obj.term,
+                  request_id: request_id
+                )
+              rescue StandardError => e
+                APP_LOGGER.error "BACKGROUND_JOB_ERROR: #{e.message}"
+                APP_LOGGER.error e.backtrace.join("\n")
+              end
             end
 
-            data = {
-              message: 'Processing started',
-              request_id: request_id
+            data = { 
+              message: 'Processing started', 
+              request_id: request_id 
             }
-
+            
             standard_response(:processing, 'Research interest processing started', data)
           end
 
@@ -73,6 +75,10 @@ module AcaRadar
                 term: request_obj.term,
                 status_url: "/api/v1/research_interest/#{job_id}"
               }
+              # puts "#{result.inspect}"
+              # session[:research_interest_embedding] = result.term
+              # session[:research_interest_term] = result.embedding
+              # session[:research_interest_2d] = resilt.vector_2d
 
               standard_response(:processing, 'Job queued', data)
             end

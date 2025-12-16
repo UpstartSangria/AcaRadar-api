@@ -12,11 +12,12 @@ module AcaRadar
 
       def call(term:, request_id:)
         publisher = Messaging::Publisher.new(AcaRadar::App.config, request_id.to_s)
-
+        publisher.publish(status: 'processing', message: 'Extracting concepts', percent: 35)
+        sleep(3)
         concepts = Entity::Concept.extract_from(term)
         return Failure('No concepts extracted from research interest') if concepts.empty?
-
-        publisher.publish(status: 'processing', message: 'Extracting concepts', percent: 10)
+        publisher.publish(status: 'processing', message: 'Extracting concepts', percent: 40)
+        sleep(2)
 
         concept_text = concepts.map(&:to_s).join(', ')
         embedding = Value::Embedding.embed_from(concept_text)
