@@ -6956,4 +6956,64 @@ http_interactions:
           </entry>
         </feed>
   recorded_at: Sun, 14 Dec 2025 13:06:17 GMT
+- request:
+    method: get
+    uri: https://export.arxiv.org/api/query?max_results=5&search_query=submittedDate:%5B201010020000%20TO%20202512160000%5D%20AND%20(jr:%22MIS%20Quarterly%22%20OR%20jr:%22Nature%22)&sortBy=submittedDate&sortOrder=ascending&start=0
+    body:
+      encoding: ASCII-8BIT
+      string: ''
+    headers:
+      Accept:
+      - application/atom+xml
+      User-Agent:
+      - ''
+      Connection:
+      - close
+      Host:
+      - export.arxiv.org
+  response:
+    status:
+      code: 503
+      message: Service Unavailable
+    headers:
+      Connection:
+      - close
+      Content-Length:
+      - '126'
+      Server:
+      - Varnish
+      Retry-After:
+      - '0'
+      Content-Type:
+      - text/html
+      Accept-Ranges:
+      - bytes
+      Date:
+      - Tue, 16 Dec 2025 08:46:56 GMT
+      Via:
+      - 1.1 varnish
+      X-Served-By:
+      - cache-itm1220066-ITM
+      X-Cache:
+      - MISS
+      X-Cache-Hits:
+      - '0'
+      X-Timer:
+      - S1765874754.483532,VS0,VE62303
+      Strict-Transport-Security:
+      - max-age=300
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <meta charset="UTF-8">
+            <title>503</title>
+          </head>
+          <body>
+            503
+          </body>
+        </html>
+  recorded_at: Tue, 16 Dec 2025 08:46:57 GMT
 recorded_with: VCR 6.3.1
