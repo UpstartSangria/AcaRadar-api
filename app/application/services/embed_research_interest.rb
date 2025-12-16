@@ -2,18 +2,20 @@
 
 require 'dry/monads'
 
+# rubocop:disable Metrics/AbcSize
+# rubocop:disable Metrics/MethodLength
 module AcaRadar
   module Service
     # Service to embed a research interest term
     class EmbedResearchInterest
       include Dry::Monads::Result::Mixin
 
-      def call(term:,request_id:)
-        publisher = Messaging::Publisher.new(AcaRadar::App.config, request_id)
-        
+      def call(term:, request_id:)
+        publisher = Messaging::Publisher.new(AcaRadar::App.config, request_id.to_s)
 
         concepts = Entity::Concept.extract_from(term)
         return Failure('No concepts extracted from research interest') if concepts.empty?
+
         publisher.publish(status: 'processing', message: 'Extracting concepts', percent: 10)
 
         concept_text = concepts.map(&:to_s).join(', ')
@@ -24,26 +26,26 @@ module AcaRadar
         publisher.publish(status: 'processing', message: 'Reducing embeddings', percent: 75)
         sleep(2)
         publisher.publish(
-          status: 'complete', 
-          message: 'Analysis done', 
+          status: 'complete',
+          message: 'Analysis done',
           percent: 100,
           payload: { vector_2d: two_dim_embedding.two_dim_embedding }
         )
         AcaRadar::App::APP_LOGGER.debug("RI raw term: #{term.inspect}")
         AcaRadar::App::APP_LOGGER.debug("RI concepts: #{concepts.map(&:to_s).inspect}")
         AcaRadar::App::APP_LOGGER.debug("RI concept_text: #{concept_text.inspect}")
-        AcaRadar::App::APP_LOGGER.debug("RI emb dims: #{embedding.full_embedding.length}")  
+        AcaRadar::App::APP_LOGGER.debug("RI emb dims: #{embedding.full_embedding.length}")
 
         Success(
           term: term,
           embedding: embedding.full_embedding,
           vector_2d: two_dim_embedding.two_dim_embedding
-        ) 
+        )
       rescue StandardError => e
         Failure("Failed to embed research interest on channel #{request_id}: #{e.message}")
       end
     end
   end
 end
-
-
+# rubocop:enable Metrics/AbcSize
+# rubocop:enable Metrics/MethodLength

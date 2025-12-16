@@ -82,7 +82,7 @@ gem 'redis'
 gem 'aws-sdk-sqs'
 gem 'shoryuken'
 
-# Worker 
+# Worker
 gem 'faye'
 
 # Policy

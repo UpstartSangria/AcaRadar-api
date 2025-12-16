@@ -34,9 +34,9 @@ use Faye::RackAdapter, mount: '/faye', timeout: 25
 use Rack::Cors do
   allow do
     origins 'localhost:9000', '127.0.0.1:9000' # Allow frontend
-    resource '*', 
-      headers: :any, 
-      methods: [:get, :post, :options]
+    resource '*',
+             headers: :any,
+             methods: %i[get post options]
   end
 end
 run AcaRadar::App.freeze.app
