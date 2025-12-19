@@ -6,21 +6,33 @@ require 'rack/cache'
 require 'redis'
 require 'faye'
 require 'rack/cors'
+require 'fileutils'
 require_relative 'require_app'
 require_app
 
+Faye::WebSocket.load_adapter('puma')
 env = ENV.fetch('RACK_ENV', 'development')
 
-if env == 'production'
-  # Won't ever be executed because we will not go in production, so no production environment
-  redis_url = ENV.fetch('REDIS_URL', 'redis://localhost:6379/0')
+use Rack::Cors do
+  allow do
+    origins 'localhost:9000', '127.0.0.1:9000', 'https://acaradar-app-3bd1e48033fd.herokuapp.com'
+    resource '*',
+             headers: :any,
+             methods: %i[get post options]
+  end
+end
 
+# IMPORTANT: mount Faye as middleware so /faye/client.js works
+use Faye::RackAdapter, mount: '/faye', timeout: 25
+
+# Cache only applies to requests that Faye doesn't intercept
+if env == 'production'
+  redis_url = ENV.fetch('REDIS_URL', 'redis://localhost:6379/0')
   use Rack::Cache,
       verbose: true,
       metastore: "#{redis_url}/metastore",
       entitystore: "#{redis_url}/entitystore"
 else
-  # Development: file-based cache in tmp/cache
   FileUtils.mkdir_p('tmp/cache/meta')
   FileUtils.mkdir_p('tmp/cache/body')
 
@@ -30,13 +42,4 @@ else
       entitystore: 'file:tmp/cache/body'
 end
 
-use Faye::RackAdapter, mount: '/faye', timeout: 25
-use Rack::Cors do
-  allow do
-    origins 'localhost:9000', '127.0.0.1:9000', 'https://acaradar-app-3bd1e48033fd.herokuapp.com'
-    resource '*',
-             headers: :any,
-             methods: %i[get post options]
-  end
-end
 run AcaRadar::App.freeze.app

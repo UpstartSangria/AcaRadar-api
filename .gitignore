@@ -6,4 +6,6 @@ coverage/*
 .venv
 .bundle/
 cache/*
-tmp/*
+tmp/hf_cache/**
+tmp/hf_cache/models--sentence--transformers--all-MiniLM-L6-v2
+spec/fixtures/cassettes/arxiv_api.yml

@@ -2,6 +2,7 @@
 
 require 'http'
 require 'json'
+require_relative '../utilities/logger'
 
 # rubocop:disable Metrics/MethodLength
 module AcaRadar
@@ -17,7 +18,8 @@ module AcaRadar
       # @param [String] message - e.g., 'Embedding research interest...'
       # @param [Integer] percent - e.g., 25, 50, 100
       def publish(status:, message:, percent: nil, payload: {})
-        faye_url = "#{@config.API_HOST}/faye"
+        @api_host = ENV.fetch('API_HOST')
+        faye_url = "#{@api_host}/faye"
 
         data = {
           status: status,
@@ -30,13 +32,13 @@ module AcaRadar
           data: data
         }.to_json
 
-        AcaRadar::App::APP_LOGGER.debug "FAYE_PUBLISH: Posting to #{faye_url} on channel #{@channel_id}"
+        AcaRadar.logger.debug("FAYE_PUBLISH: Posting to #{faye_url} on channel #{@channel_id}")
 
         HTTP.post(faye_url, form: { message: faye_message })
       rescue HTTP::ConnectionError => e
-        AcaRadar::App::APP_LOGGER.error "FAYE_ERROR: Server not found at #{faye_url}. Details: #{e.message}"
+        AcaRadar.logger.error("FAYE_ERROR: Server not found at #{faye_url}. Details: #{e.message}")
       rescue StandardError => e
-        AcaRadar::App::APP_LOGGER.error "FAYE_ERROR: Generic failure. Details: #{e.message}"
+        AcaRadar.logger.error("FAYE_ERROR: Generic failure. Details: #{e.message}")
       end
 
       private

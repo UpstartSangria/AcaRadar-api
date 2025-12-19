@@ -2,3 +2,5 @@
 sentence-transformers
 torchvision==0.22.0
 scikit-learn
+flask
+gunicorn

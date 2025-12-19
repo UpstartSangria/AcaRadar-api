@@ -87,3 +87,6 @@ gem 'faye'
 
 # Policy
 gem 'rack-cors'
+
+# Other
+gem 'foreman'

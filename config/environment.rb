@@ -25,6 +25,7 @@ module AcaRadar
       use Rack::Session::Cookie, secret: ENV.fetch('SESSION_SECRET')
       CONFIG = YAML.safe_load_file('config/secrets.yml')
       ENV['DATABASE_URL'] ||= "sqlite://#{config.DB_FILENAME}"
+      # AcaRadar-api/tmp/hf_cache
     end
 
     # ---------------------------

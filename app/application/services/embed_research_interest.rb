@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'dry/monads'
+require_relative '../../infrastructure/utilities/logger'
 
 # rubocop:disable Metrics/AbcSize
 # rubocop:disable Metrics/MethodLength
@@ -33,10 +34,10 @@ module AcaRadar
           percent: 100,
           payload: { vector_2d: two_dim_embedding.two_dim_embedding }
         )
-        AcaRadar::App::APP_LOGGER.debug("RI raw term: #{term.inspect}")
-        AcaRadar::App::APP_LOGGER.debug("RI concepts: #{concepts.map(&:to_s).inspect}")
-        AcaRadar::App::APP_LOGGER.debug("RI concept_text: #{concept_text.inspect}")
-        AcaRadar::App::APP_LOGGER.debug("RI emb dims: #{embedding.full_embedding.length}")
+        AcaRadar.logger.debug("RI raw term: #{term.inspect}")
+        AcaRadar.logger.debug("RI concepts: #{concepts.map(&:to_s).inspect}")
+        AcaRadar.logger.debug("RI concept_text: #{concept_text.inspect}")
+        AcaRadar.logger.debug("RI emb dims: #{embedding.full_embedding.length}")
 
         Success(
           term: term,

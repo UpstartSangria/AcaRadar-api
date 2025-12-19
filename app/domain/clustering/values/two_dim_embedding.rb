@@ -25,9 +25,10 @@ module AcaRadar
         mean_path = ENV['PCA_MEAN_PATH'] || 'app/domain/clustering/services/pca_mean.json'
         comp_path = ENV['PCA_COMPONENTS_PATH'] || 'app/domain/clustering/services/pca_components.json'
 
+        python = ENV.fetch('PYTHON_BIN', 'python3')
         stdout, stderr, status = Open3.capture3(
           { 'PCA_MEAN_PATH' => mean_path, 'PCA_COMPONENTS_PATH' => comp_path },
-          'python3', dim_reducer_path,
+          python, dim_reducer_path,
           '--mean-path', mean_path,
           '--components-path', comp_path,
           stdin_data: input

@@ -1,12 +1,11 @@
 # frozen_string_literal: true
 
-require 'open3'
 require 'json'
+require 'http'
+require_relative '../../../infrastructure/utilities/logger'
 
 module AcaRadar
-  # Value objects depending on Domain Entity
   module Value
-    # Represents embedding of the concepts
     class Embedding
       attr_reader :full_embedding, :short_embedding
 
@@ -17,28 +16,50 @@ module AcaRadar
 
       def self.embed_from(concept)
         input = concept.to_s
-        embedder_path = ENV['EMBEDDER_PATH'] || 'app/domain/clustering/services/embedder.py'
+        url   = ENV.fetch('EMBED_SERVICE_URL', 'http://localhost:8001/embed')
 
-        stdout, stderr, status = Open3.capture3('python3', embedder_path, stdin_data: input)
+        # Use request id if you have one; otherwise generate cheap trace id
+        trace_id = ENV['ACARADAR_TRACE_ID'] || "ri-#{Time.now.to_i}-#{rand(1000)}"
 
-        raise "Python script failed: #{stderr}" unless status.success?
+        AcaRadar.logger.debug("EMBED HTTP start url=#{url} text_len=#{input.length} trace_id=#{trace_id}")
 
-        begin
-          parsed_json = JSON.parse(stdout)
-          new(parsed_json)
-        rescue JSON::ParserError => e
-          raise "Failed to parse JSON from embedder.py: #{e.message}"
+        t0 = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+        response = HTTP
+                   .headers(
+                     content_type: 'application/json',
+                     accept: 'application/json',
+                     'X-Request-Id' => trace_id
+                   )
+                   .timeout(connect: 2, read: 30)
+                   .post(url, json: { text: input })
+
+        ms = (Process.clock_gettime(Process::CLOCK_MONOTONIC) - t0) * 1000.0
+        AcaRadar.logger.debug("EMBED HTTP resp code=#{response.code} ms=#{ms.round(1)} trace_id=#{trace_id}")
+
+        unless response.code.between?(200, 299)
+          body = response.body.to_s
+          AcaRadar.logger.error("EMBED HTTP error code=#{response.code} body=#{body[0, 300]}")
+          raise "Embed service failed: #{response.code}"
         end
+
+        parsed = JSON.parse(response.body.to_s)
+        embedding = parsed['embedding'] || []
+        service_ms = parsed['ms']
+
+        AcaRadar.logger.debug("EMBED parsed emb_dim=#{embedding.length} service_ms=#{service_ms.inspect} trace_id=#{trace_id}")
+
+        new(embedding)
+      rescue JSON::ParserError => e
+        raise "Failed to parse JSON from embed service: #{e.message}"
+      rescue HTTP::TimeoutError
+        AcaRadar.logger.error('EMBED HTTP timeout')
+        raise 'Embed service timed out'
       end
 
       private
 
       def truncate_to_10_dims(embedding_vector)
-        if embedding_vector.length > 10
-          embedding_vector.first(10)
-        else
-          embedding_vector
-        end
+        embedding_vector.length > 10 ? embedding_vector.first(10) : embedding_vector
       end
     end
   end
