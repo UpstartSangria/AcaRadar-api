@@ -21,6 +21,7 @@ module AcaRadar
         publisher.publish(status: 'processing', message: 'Extracting concepts', percent: 40)
         sleep(2)
 
+        concepts_array = concepts.map(&:to_s) #array of concepts
         concept_text = concepts.map(&:to_s).join(', ')
         embedding = Value::Embedding.embed_from(concept_text)
         publisher.publish(status: 'processing', message: 'Calculating embeddings', percent: 50)
@@ -32,7 +33,7 @@ module AcaRadar
           status: 'complete',
           message: 'Analysis done',
           percent: 100,
-          payload: { vector_2d: two_dim_embedding.two_dim_embedding }
+          payload: { vector_2d: two_dim_embedding.two_dim_embedding, concepts: concepts_array }
         )
         AcaRadar.logger.debug("RI raw term: #{term.inspect}")
         AcaRadar.logger.debug("RI concepts: #{concepts.map(&:to_s).inspect}")
@@ -42,7 +43,8 @@ module AcaRadar
         Success(
           term: term,
           embedding: embedding.full_embedding,
-          vector_2d: two_dim_embedding.two_dim_embedding
+          vector_2d: two_dim_embedding.two_dim_embedding,
+          concepts: concepts_array
         )
       rescue StandardError => e
         Failure("Failed to embed research interest on channel #{request_id}: #{e.message}")

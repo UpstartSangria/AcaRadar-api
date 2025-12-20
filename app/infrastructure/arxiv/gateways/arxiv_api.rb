@@ -17,7 +17,7 @@ module AcaRadar
     MIN_DATE_ARXIV = '201010020000'
     MAX_DATE_ARXIV = Date.today.strftime('%Y%m%d0000')
     JOURNALS = [].freeze
-    MAX_RESULTS = 5
+    MAX_RESULTS = 10000
     SORT_BY = 'submittedDate'
     SORT_ORDER = 'ascending'
   end

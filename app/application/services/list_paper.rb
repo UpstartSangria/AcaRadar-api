@@ -46,7 +46,6 @@ module AcaRadar
           skipped_nonfinite = 0
           skipped_zero = 0
 
-          # Collect a few examples for logs (so you can see why things were skipped)
           skipped_samples = {
             empty: [],
             dim: [],
@@ -90,7 +89,6 @@ module AcaRadar
 
             score = AcaRadar::Service::CalculateSimilarity.score(research, emb_f)
 
-            # Guard against weird numeric output
             if score.nil? || !score.finite?
               skipped_nonfinite += 1
               skipped_samples[:nonfinite] << "#{paper.title} (score=#{score.inspect})" if skipped_samples[:nonfinite].length < 3
