@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../orm/paper_orm'
+require_relative '../orm/author_orm'
 
 # rubocop:disable Metrics/AbcSize
 # rubocop:disable Metrics/CyclomaticComplexity
@@ -47,7 +48,16 @@ module AcaRadar
         paper_entity.instance_variable_set(:@title, db_record.title)
         paper_entity.instance_variable_set(:@published, db_record.published)
         paper_entity.instance_variable_set(:@links, deserialize_links(db_record.links))
-        paper_entity.instance_variable_set(:@authors, deserialize_authors(db_record.authors))
+
+        raw_authors =
+          if db_record.values.key?(:authors) && db_record[:authors]
+            db_record[:authors]                      # JSON column present in selected fields
+          else
+            # If the column wasn't selected, fetch it cheaply by id
+            Database::PaperOrm.where(paper_id: db_record.paper_id).get(:authors)
+          end
+
+        paper_entity.instance_variable_set(:@authors, deserialize_authors(raw_authors))
         paper_entity.instance_variable_set(:@summary, db_record.summary)
         paper_entity.instance_variable_set(:@short_summary, db_record.short_summary)
         concepts_data = db_record.concepts || '[]'
@@ -86,14 +96,37 @@ module AcaRadar
           categories: JSON.generate(attributes[:categories] || []),
           links: serialize_links(attributes[:links])
         ).compact
-
-        existing = Database::PaperOrm.where(origin_id: attributes[:origin_id]).first
-        if existing
-          existing.update(serialized_attrs)
+      
+        paper = Database::PaperOrm.where(origin_id: attributes[:origin_id]).first
+        if paper
+          paper.update(serialized_attrs)
         else
-          Database::PaperOrm.create(serialized_attrs)
+          paper = Database::PaperOrm.create(serialized_attrs)
         end
+
+        sync_authors!(paper.paper_id, attributes[:authors])
+        paper
       end
+      
+      
+      def self.sync_authors!(paper_id, authors)
+        return if paper_id.nil? || authors.nil? || authors.empty?
+      
+        join = Database::PaperOrm.db[:paper_authors]
+      
+        authors.each do |author|
+          name = author.respond_to?(:name) ? author.name : (author[:name] || author['name'])
+          name = name.to_s.strip
+          next if name.empty?
+      
+          author_row = Database::AuthorOrm.find_or_create(name: name)
+      
+          begin
+            join.insert(paper_id: paper_id, author_id: author_row.author_id)
+          rescue Sequel::UniqueConstraintViolation
+          end
+        end
+      end      
 
       def self.serialize_authors(authors)
         return '[]' if authors.nil? || authors.empty?
@@ -102,11 +135,16 @@ module AcaRadar
       end
 
       def self.deserialize_authors(authors_data)
-        return [] if authors_data.nil? || authors_data.empty?
-
-        authors = authors_data.is_a?(String) ? JSON.parse(authors_data) : authors_data
-        authors.map { |hash| Entity::Author.new(name: hash['name']) }
+        return [] if authors_data.nil? || authors_data == '' || authors_data == []
+      
+        items = authors_data.is_a?(String) ? JSON.parse(authors_data) : Array(authors_data)
+      
+        items.map do |h|
+          name = h.is_a?(Hash) ? (h['name'] || h[:name]) : (h.respond_to?(:name) ? h.name : h.to_s)
+          Entity::Author.new(name: name.to_s.strip)
+        end.reject { |a| a.name.to_s.strip.empty? }
       end
+      
 
       def self.serialize_links(links)
         return '{}' if links.nil?

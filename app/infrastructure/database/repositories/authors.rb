@@ -26,13 +26,18 @@ module AcaRadar
 
       def self.rebuild_entity(db_record)
         return nil unless db_record
-
-        Entity::Author.new(
-          name: db_record.name,
-          first_name: db_record.first_name,
-          last_name: db_record.last_name
-        )
+      
+        begin
+          Entity::Author.new(
+            name: db_record.name,
+            first_name: db_record.first_name,
+            last_name: db_record.last_name
+          )
+        rescue ArgumentError
+          Entity::Author.new(db_record.name.to_s)
+        end
       end
+      
     end
   end
 end

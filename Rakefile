@@ -39,7 +39,7 @@ task :run do
   embed_port = (ENV['EMBED_PORT'] || '8001').to_s
   embed_host = ENV['EMBED_HOST'] || '127.0.0.1'
   embed_url  = ENV['EMBED_SERVICE_URL'] || "http://#{embed_host}:#{embed_port}"
-  python_bin = ENV['PYTHON_BIN'] || File.expand_path('../.venv/bin/python', __dir__)
+  python_bin = ENV['PYTHON_BIN'] || File.expand_path('.venv/bin/python', __dir__)
 
   # HuggingFace cache dir 
   cache_root = File.expand_path('tmp/hf_cache', __dir__)
