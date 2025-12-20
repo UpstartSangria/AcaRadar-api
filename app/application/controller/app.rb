@@ -6,6 +6,7 @@ require 'ostruct'
 require 'logger'
 require 'digest'
 require 'base64'
+require 'yaml'
 require_relative '../../infrastructure/utilities/logger'
 
 # rubocop:disable Metrics/ClassLength
@@ -223,65 +224,75 @@ module AcaRadar
             request_obj = Request::ListPapers.new(routing.params)
 
             unless request_obj.valid?
-              msg = if request_obj.journals.uniq.length < 2
-                      'Please select two different journals'
-                    else
-                      'Invalid or unknown journals.'
-                    end
-              standard_response(:bad_request, msg)
+              standard_response(:bad_request, request_obj.error_message || 'Invalid request')
             end
 
-            request_id = session[:research_interest_request_id]
+            request_id =
+              routing.params['request_id'] ||
+              routing.params['job_id'] ||
+              session[:research_interest_request_id]
+
+            job = request_id ? Repository::ResearchInterestJob.find(request_id) : nil
+
             AcaRadar.logger.debug(
               "PAPERS start journals=#{request_obj.journals.inspect} page=#{request_obj.page} " \
-              "request_id=#{request_id.inspect} term=#{session[:research_interest_term].inspect}"
+              "request_id=#{request_id.inspect} job_status=#{job&.status.inspect} term=#{job&.term.inspect}"
             )
+
+            # If the caller provided a request_id, require that job to be completed
+            if request_id && (!job || job.status != 'completed')
+              data = {
+                status: job&.status || 'queued',
+                request_id: request_id,
+                status_url: "/api/v1/research_interest/#{request_id}"
+              }
+              standard_response(:processing, 'Research interest still processing', data)
+            end
 
             research_embedding = nil
 
-            if request_id
-              job = Repository::ResearchInterestJob.find(request_id)
-
-              if job
-                AcaRadar.logger.debug(
-                  "PAPERS job found job_id=#{job.job_id} status=#{job.status.inspect} " \
-                  "has_embedding_b64=#{job.respond_to?(:embedding_b64) && !job.embedding_b64.to_s.empty?}"
-                )
-
-                if job.status == 'completed'
-                  b64 =
-                    if job.respond_to?(:embedding_b64) && job.embedding_b64 && !job.embedding_b64.to_s.empty?
-                      job.embedding_b64
-                    else
-                      session[:research_interest_embedding_b64]
-                    end
-
-                  if b64 && !b64.to_s.empty?
-                    begin
-                      research_embedding = Base64.decode64(b64).unpack('e*') # float32 LE
-                      AcaRadar.logger.debug("PAPERS decoded RI embedding len=#{research_embedding.length} b64_bytes=#{b64.bytesize}")
-                    rescue StandardError => e
-                      AcaRadar.logger.error("PAPERS RI embedding decode failed: #{e.class} - #{e.message}")
-                      research_embedding = nil
-                    end
-                  else
-                    AcaRadar.logger.debug("PAPERS completed job but no embedding available; similarity disabled")
-                  end
+            # At this point: either request_id was nil (legacy fallback), or job is completed.
+            if job
+              b64 =
+                if job.respond_to?(:embedding_b64) && job.embedding_b64 && !job.embedding_b64.to_s.empty?
+                  job.embedding_b64
                 else
-                  AcaRadar.logger.debug("PAPERS job not completed yet; similarity disabled")
+                  session[:research_interest_embedding_b64]
+                end
+
+              if b64 && !b64.to_s.empty?
+                begin
+                  research_embedding = Base64.decode64(b64).unpack('e*') # float32 LE
+                  AcaRadar.logger.debug("PAPERS decoded RI embedding len=#{research_embedding.length} b64_bytes=#{b64.bytesize}")
+                rescue StandardError => e
+                  AcaRadar.logger.error("PAPERS RI embedding decode failed: #{e.class} - #{e.message}")
+                  research_embedding = nil
                 end
               else
-                AcaRadar.logger.debug("PAPERS no job record found for request_id=#{request_id}; similarity disabled")
+                AcaRadar.logger.debug("PAPERS completed job but no embedding available; similarity disabled")
               end
             else
-              AcaRadar.logger.debug('PAPERS no request_id in session; similarity disabled')
+              AcaRadar.logger.debug('PAPERS no request_id provided; similarity disabled (legacy flow)')
+            end
+
+
+            top_n_raw = routing.params['top_n'] || routing.params['n']
+
+            # If the client requests top_n, require an embedded research interest
+            if top_n_raw && !top_n_raw.to_s.strip.empty? && !research_embedding.is_a?(Array)
+              standard_response(:bad_request, 'top_n requires an embedded research interest (request_id)')
             end
 
             result = Service::ListPapers.new.call(
               journals: request_obj.journals,
               page: request_obj.page,
-              research_embedding: research_embedding
+              research_embedding: research_embedding,
+              top_n: top_n_raw,
+              min_date: request_obj.min_date,
+              max_date: request_obj.max_date
             )
+
+
             standard_response(:internal_error, 'Failed to list papers') if result.failure?
 
             list = result.value!
@@ -307,9 +318,17 @@ module AcaRadar
 
             standard_response(:not_modified, 'Not Modified') if env['HTTP_IF_NONE_MATCH'] == %("#{etag_value}")
 
+            ri_term = job&.term || session[:research_interest_term]
+            ri_2d =
+              if job && job.status == 'completed'
+                [job.vector_x.to_f, job.vector_y.to_f]
+              else
+                session[:research_interest_2d]
+              end
+
             response_obj = OpenStruct.new(
-              research_interest_term: session[:research_interest_term],
-              research_interest_2d:   session[:research_interest_2d],
+              research_interest_term: ri_term,
+              research_interest_2d:   ri_2d,
               journals: request_obj.journals,
               papers: list
             )
@@ -318,6 +337,67 @@ module AcaRadar
             standard_response(:ok, 'Papers retrieved successfully', data)
           end
         end
+        routing.on 'journals' do
+          routing.get do
+            yaml_path = File.expand_path('../../../bin/journals.yml', __dir__)
+            unless File.file?(yaml_path)
+              standard_response(:internal_error, "journals.yml not found at #{yaml_path}")
+            end
+        
+            raw = File.read(yaml_path)
+        
+            data =
+              begin
+                YAML.safe_load(raw, permitted_classes: [], permitted_symbols: [], aliases: true) || {}
+              rescue ArgumentError
+                YAML.safe_load(raw, [], [], true) || {}
+              end
+        
+            domains = (data['domains'] || data[:domains] || {})
+            unless domains.is_a?(Hash)
+              standard_response(:internal_error, 'journals.yml has unexpected structure (expected domains: {...})')
+            end
+        
+            # Return grouped options: [{key,label,journals:[...]}]
+            payload = domains.map do |key, node|
+              label = (node['label'] || node[:label] || key.to_s).to_s
+              journals = []
+        
+              # collect canonical names from journals arrays + subdomains
+              collect_names = lambda do |n|
+                next unless n.is_a?(Hash)
+        
+                jnode = n['journals'] || n[:journals]
+                case jnode
+                when Array
+                  jnode.each do |j|
+                    if j.is_a?(Hash)
+                      name = j['name'] || j[:name]
+                      journals << name.to_s if name
+                    else
+                      journals << j.to_s
+                    end
+                  end
+                when Hash
+                  jnode.each_key { |name| journals << name.to_s }
+                end
+        
+                sub = n['subdomains'] || n[:subdomains]
+                sub&.each_value { |sd| collect_names.call(sd) } if sub.is_a?(Hash)
+              end
+        
+              collect_names.call(node)
+        
+              {
+                key: key.to_s,
+                label: label,
+                journals: journals.map(&:strip).reject(&:empty?).uniq
+              }
+            end
+        
+            standard_response(:ok, 'Journals retrieved successfully', { domains: payload })
+          end
+        end        
       end
     end
 

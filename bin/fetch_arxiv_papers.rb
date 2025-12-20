@@ -144,10 +144,12 @@ module AcaRadar
       end
 
       @journals.each do |journal|
-        query = Query.new(journals: [journal[0]])
-        fetch_and_process(query)
+        canonical = journal[0]
+        query = Query.new(journals: [canonical])
+        fetch_and_process(query, canonical)
         sleep 5
       end
+      
 
       puts 'Fetched and processed papers for all journals.'
       fit_pca_and_backfill_two_dim_embeddings!
@@ -156,7 +158,7 @@ module AcaRadar
 
     private
 
-    def fetch_and_process(query)
+    def fetch_and_process(query, canonical_journal)
       api_response = @api.call(query)
       return unless api_response.ok?
 
@@ -176,6 +178,7 @@ module AcaRadar
           two_dim_embedding: [], # placeholder; will be backfilled after PCA fit
           categories: paper.categories,
           links: paper.links,
+          journal: canonical_journal,
           fetched_at: Time.now
         )
       rescue StandardError => e

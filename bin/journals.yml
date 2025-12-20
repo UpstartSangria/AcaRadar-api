@@ -1,0 +1,430 @@
+domains:
+  information_systems:
+    label: "Information Systems"
+    journals:
+      - name: "MIS Quarterly"
+        aliases:
+          - "MIS Quarterly"
+          - "MIS Q"
+          - "MISQ"
+          - "MIS Quart."
+      - name: "Information Systems Research"
+        aliases:
+          - "Information Systems Research"
+          - "Inf. Syst. Res."
+          - "ISR"
+      - name: "Journal of the Association for Information Systems"
+        aliases:
+          - "Journal of the Association for Information Systems"
+          - "J. Assoc. Inf. Syst."
+          - "JAIS"
+      - name: "Journal of Management Information Systems"
+        aliases:
+          - "Journal of Management Information Systems"
+          - "J. Manage. Inf. Syst."
+          - "JMIS"
+      - name: "Journal of Information Technology"
+        aliases:
+          - "Journal of Information Technology"
+          - "J. Inf. Technol."
+          - "JIT"
+      - name: "Information Systems Journal"
+        aliases:
+          - "Information Systems Journal"
+          - "Inf. Syst. J."
+          - "ISJ"
+      - name: "European Journal of Information Systems"
+        aliases:
+          - "European Journal of Information Systems"
+          - "Eur. J. Inf. Syst."
+          - "EJIS"
+      - name: "Journal of Strategic Information Systems"
+        aliases:
+          - "Journal of Strategic Information Systems"
+          - "J. Strateg. Inf. Syst."
+          - "JSIS"
+      - name: "Decision Support Systems"
+        aliases:
+          - "Decision Support Systems"
+          - "Decis. Support Syst."
+          - "DSS"
+      - name: "Information & Management"
+        aliases:
+          - "Information & Management"
+          - "Information and Management"
+          - "Inf. Manage."
+      - name: "Information and Organization"
+        aliases:
+          - "Information and Organization"
+          - "Inf. Organ."
+          - "Information & Organization"
+
+  or_ms_operations_analytics:
+    label: "OR / MS / Operations / Analytics"
+    journals:
+      - name: "Management Science"
+        aliases:
+          - "Management Science"
+          - "Manag. Sci."
+          - "Management Sci."
+      - name: "Operations Research"
+        aliases:
+          - "Operations Research"
+          - "Oper. Res."
+          - "Ops. Res."
+      - name: "Manufacturing & Service Operations Management"
+        aliases:
+          - "Manufacturing & Service Operations Management"
+          - "Manufacturing and Service Operations Management"
+          - "Manuf. Serv. Oper. Manag."
+          - "MSOM"
+      - name: "Mathematics of Operations Research"
+        aliases:
+          - "Mathematics of Operations Research"
+          - "Math. Oper. Res."
+          - "MOR"
+      - name: "Transportation Science"
+        aliases:
+          - "Transportation Science"
+          - "Transp. Sci."
+      - name: "INFORMS Journal on Computing"
+        aliases:
+          - "INFORMS Journal on Computing"
+          - "INFORMS J. Comput."
+          - "Inf. J. Comput."
+      - name: "Decision Analysis"
+        aliases:
+          - "Decision Analysis"
+          - "Decis. Anal."
+      - name: "Production and Operations Management"
+        aliases:
+          - "Production and Operations Management"
+          - "Prod. Oper. Manag."
+          - "POM"
+      - name: "Journal of Operations Management"
+        aliases:
+          - "Journal of Operations Management"
+          - "J. Oper. Manag."
+          - "JOM"
+      - name: "Organization Science"
+        aliases:
+          - "Organization Science"
+          - "Organ. Sci."
+      - name: "Service Science"
+        aliases:
+          - "Service Science"
+          - "Serv. Sci."
+      - name: "Stochastic Systems"
+        aliases:
+          - "Stochastic Systems"
+          - "Stoch. Syst."
+
+  management_strategy_organizations:
+    label: "General Management / Strategy / Organizations"
+    journals:
+      - name: "Academy of Management Journal"
+        aliases:
+          - "Academy of Management Journal"
+          - "Acad. Manage. J."
+          - "AMJ"
+      - name: "Academy of Management Review"
+        aliases:
+          - "Academy of Management Review"
+          - "Acad. Manage. Rev."
+          - "AMR"
+      - name: "Administrative Science Quarterly"
+        aliases:
+          - "Administrative Science Quarterly"
+          - "Adm. Sci. Q."
+          - "ASQ"
+      - name: "Strategic Management Journal"
+        aliases:
+          - "Strategic Management Journal"
+          - "Strateg. Manage. J."
+          - "SMJ"
+      - name: "Journal of Management"
+        aliases:
+          - "Journal of Management"
+          - "J. Manage."
+      - name: "Journal of Management Studies"
+        aliases:
+          - "Journal of Management Studies"
+          - "J. Manage. Stud."
+          - "JMS"
+      - name: "Organization Studies"
+        aliases:
+          - "Organization Studies"
+          - "Organ. Stud."
+      - name: "Research Policy"
+        aliases:
+          - "Research Policy"
+          - "Res. Policy"
+      - name: "Harvard Business Review"
+        aliases:
+          - "Harvard Business Review"
+          - "Harv. Bus. Rev."
+          - "HBR"
+      - name: "MIT Sloan Management Review"
+        aliases:
+          - "MIT Sloan Management Review"
+          - "Sloan Management Review"
+          - "Sloan Manag. Rev."
+
+  marketing:
+    label: "Marketing"
+    journals:
+      - name: "Journal of Marketing"
+        aliases:
+          - "Journal of Marketing"
+          - "J. Mark."
+          - "JM"
+      - name: "Journal of Marketing Research"
+        aliases:
+          - "Journal of Marketing Research"
+          - "J. Mark. Res."
+          - "JMR"
+      - name: "Journal of Consumer Research"
+        aliases:
+          - "Journal of Consumer Research"
+          - "J. Consum. Res."
+          - "JCR"
+      - name: "Marketing Science"
+        aliases:
+          - "Marketing Science"
+          - "Mark. Sci."
+      - name: "Journal of Consumer Psychology"
+        aliases:
+          - "Journal of Consumer Psychology"
+          - "J. Consum. Psychol."
+      - name: "Journal of the Academy of Marketing Science"
+        aliases:
+          - "Journal of the Academy of Marketing Science"
+          - "J. Acad. Mark. Sci."
+          - "JAMS"
+
+  accounting:
+    label: "Accounting"
+    journals:
+      - name: "The Accounting Review"
+        aliases:
+          - "The Accounting Review"
+          - "Account. Rev."
+          - "TAR"
+      - name: "Journal of Accounting and Economics"
+        aliases:
+          - "Journal of Accounting and Economics"
+          - "J. Account. Econ."
+          - "JAE"
+      - name: "Journal of Accounting Research"
+        aliases:
+          - "Journal of Accounting Research"
+          - "J. Account. Res."
+          - "JAR"
+      - name: "Contemporary Accounting Research"
+        aliases:
+          - "Contemporary Accounting Research"
+          - "Contemp. Account. Res."
+          - "CAR"
+      - name: "Accounting, Organizations and Society"
+        aliases:
+          - "Accounting, Organizations and Society"
+          - "Account. Organ. Soc."
+          - "AOS"
+      - name: "Review of Accounting Studies"
+        aliases:
+          - "Review of Accounting Studies"
+          - "Rev. Account. Stud."
+          - "RAST"
+
+  finance_economics:
+    label: "Finance & Economics"
+    journals:
+      - name: "Journal of Finance"
+        aliases:
+          - "Journal of Finance"
+          - "J. Finance"
+          - "J Fin."
+          - "JF"
+      - name: "Journal of Financial Economics"
+        aliases:
+          - "Journal of Financial Economics"
+          - "J. Financ. Econ."
+          - "JFE"
+      - name: "The Review of Financial Studies"
+        aliases:
+          - "The Review of Financial Studies"
+          - "Rev. Financ. Stud."
+          - "RFS"
+      - name: "Journal of Financial and Quantitative Analysis"
+        aliases:
+          - "Journal of Financial and Quantitative Analysis"
+          - "J. Financ. Quant. Anal."
+          - "JFQA"
+      - name: "American Economic Review"
+        aliases:
+          - "American Economic Review"
+          - "Am. Econ. Rev."
+          - "AER"
+      - name: "Econometrica"
+        aliases:
+          - "Econometrica"
+      - name: "Journal of Political Economy"
+        aliases:
+          - "Journal of Political Economy"
+          - "J. Polit. Econ."
+          - "JPE"
+      - name: "The Quarterly Journal of Economics"
+        aliases:
+          - "The Quarterly Journal of Economics"
+          - "Q. J. Econ."
+          - "QJE"
+      - name: "Review of Economic Studies"
+        aliases:
+          - "Review of Economic Studies"
+          - "Rev. Econ. Stud."
+          - "RES"
+
+  entrepreneurship_ob_hr_ethics:
+    label: "Entrepreneurship / OB / HR / Ethics"
+    journals:
+      - name: "Entrepreneurship Theory and Practice"
+        aliases:
+          - "Entrepreneurship Theory and Practice"
+          - "Entrepreneur. Theory Pract."
+          - "ETP"
+      - name: "Journal of Business Venturing"
+        aliases:
+          - "Journal of Business Venturing"
+          - "J. Bus. Ventur."
+          - "JBV"
+      - name: "Strategic Entrepreneurship Journal"
+        aliases:
+          - "Strategic Entrepreneurship Journal"
+          - "Strateg. Entrepreneur. J."
+          - "SEJ"
+      - name: "Organizational Behavior and Human Decision Processes"
+        aliases:
+          - "Organizational Behavior and Human Decision Processes"
+          - "Organ. Behav. Hum. Decis. Process."
+          - "OBHDP"
+      - name: "Journal of Applied Psychology"
+        aliases:
+          - "Journal of Applied Psychology"
+          - "J. Appl. Psychol."
+          - "JAP"
+      - name: "Human Relations"
+        aliases:
+          - "Human Relations"
+          - "Hum. Relat."
+      - name: "Journal of Business Ethics"
+        aliases:
+          - "Journal of Business Ethics"
+          - "J. Bus. Ethics"
+          - "JBE"
+
+  computer_science:
+    label: "Computer Science"
+    subdomains:
+      cs_theory_general:
+        label: "CS Theory / General"
+        journals:
+          - name: "Journal of the ACM"
+            aliases:
+              - "Journal of the ACM"
+              - "J. ACM"
+              - "JACM"
+      acm_transactions:
+        label: "ACM Transactions"
+        journals:
+          - name: "ACM Transactions on Database Systems"
+            aliases:
+              - "ACM Transactions on Database Systems"
+              - "ACM Trans. Database Syst."
+              - "TODS"
+          - name: "ACM Transactions on Computer Systems"
+            aliases:
+              - "ACM Transactions on Computer Systems"
+              - "ACM Trans. Comput. Syst."
+              - "TOCS"
+          - name: "ACM Transactions on Information Systems"
+            aliases:
+              - "ACM Transactions on Information Systems"
+              - "ACM Trans. Inf. Syst."
+              - "TOIS"
+          - name: "ACM Transactions on Computer-Human Interaction"
+            aliases:
+              - "ACM Transactions on Computer-Human Interaction"
+              - "ACM Trans. Comput.-Hum. Interact."
+              - "TOCHI"
+          - name: "ACM Transactions on Graphics"
+            aliases:
+              - "ACM Transactions on Graphics"
+              - "ACM Trans. Graph."
+              - "TOG"
+          - name: "ACM Transactions on Privacy and Security"
+            aliases:
+              - "ACM Transactions on Privacy and Security"
+              - "ACM Trans. Priv. Secur."
+              - "TOPS"
+          - name: "ACM Transactions on Management Information Systems"
+            aliases:
+              - "ACM Transactions on Management Information Systems"
+              - "ACM Trans. Manage. Inf. Syst."
+              - "TMIS"
+      data_management:
+        label: "Data Management"
+        journals:
+          - name: "The VLDB Journal"
+            aliases:
+              - "The VLDB Journal"
+              - "VLDB J."
+              - "VLDB Journal"
+          - name: "IEEE Transactions on Knowledge and Data Engineering"
+            aliases:
+              - "IEEE Transactions on Knowledge and Data Engineering"
+              - "IEEE Trans. Knowl. Data Eng."
+              - "TKDE"
+      ai_ml_vision:
+        label: "AI / ML / Vision"
+        journals:
+          - name: "Journal of Machine Learning Research"
+            aliases:
+              - "Journal of Machine Learning Research"
+              - "J. Mach. Learn. Res."
+              - "JMLR"
+          - name: "Machine Learning"
+            aliases:
+              - "Machine Learning"
+              - "Mach. Learn."
+          - name: "Artificial Intelligence"
+            aliases:
+              - "Artificial Intelligence"
+              - "Artif. Intell."
+          - name: "Journal of Artificial Intelligence Research"
+            aliases:
+              - "Journal of Artificial Intelligence Research"
+              - "J. Artif. Intell. Res."
+              - "JAIR"
+          - name: "IEEE Transactions on Pattern Analysis and Machine Intelligence"
+            aliases:
+              - "IEEE Transactions on Pattern Analysis and Machine Intelligence"
+              - "IEEE Trans. Pattern Anal. Mach. Intell."
+              - "PAMI"
+      software_security:
+        label: "Software Engineering / Security"
+        journals:
+          - name: "IEEE Transactions on Software Engineering"
+            aliases:
+              - "IEEE Transactions on Software Engineering"
+              - "IEEE Trans. Softw. Eng."
+              - "TSE"
+          - name: "IEEE Transactions on Dependable and Secure Computing"
+            aliases:
+              - "IEEE Transactions on Dependable and Secure Computing"
+              - "IEEE Trans. Dependable Secure Comput."
+              - "TDSC"
+          - name: "IEEE Transactions on Information Forensics and Security"
+            aliases:
+              - "IEEE Transactions on Information Forensics and Security"
+              - "IEEE Trans. Inf. Forensics Secur."
+              - "TIFS"

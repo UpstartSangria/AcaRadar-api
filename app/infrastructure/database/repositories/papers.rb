@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'time'
+
 require_relative '../orm/paper_orm'
 require_relative '../orm/author_orm'
 
@@ -29,15 +31,59 @@ module AcaRadar
         rebuild_entity Database::PaperOrm.first(title:)
       end
 
-      # hot fix, not using journal as category yet
-      def self.find_by_categories(_categories, limit: 50, offset: 0)
-        Database::PaperOrm.limit(limit).offset(offset).map { |db_record| rebuild_entity(db_record) }
+      # Filter by stored journal + optional published date range.
+      # NOTE: This relies on papers.journal being populated by the fetch script.
+      def self.find_by_categories(journals, limit: 50, offset: 0, min_date: nil, max_date: nil)
+        journals = Array(journals).map { |j| j.to_s.strip }.reject(&:empty?).uniq
+
+        ds = Database::PaperOrm.dataset
+
+        if Database::PaperOrm.columns.include?(:journal) && journals.any?
+          ds = ds.where(journal: journals)
+        end
+
+        # Date filter on `published` (works for DateTime and ISO-8601-ish strings in most DBs)
+        min_t = normalize_time_start(min_date)
+        max_t = normalize_time_end(max_date)
+
+        if min_t && Database::PaperOrm.columns.include?(:published)
+          ds = ds.where { published >= min_t }
+        end
+
+        if max_t && Database::PaperOrm.columns.include?(:published)
+          ds = ds.where { published <= max_t }
+        end
+
+        ds = ds.order(Sequel.desc(:published)) if Database::PaperOrm.columns.include?(:published)
+
+        records = ds.limit(limit).offset(offset).all
+
+        # Soft warning: if journal column exists but nothing matches, you're probably not backfilled yet
+        if Database::PaperOrm.columns.include?(:journal) && journals.any? && records.empty?
+          warn "[Repository::Paper] No rows matched journals=#{journals.inspect}. Did you run migrations + re-fetch to backfill papers.journal?"
+        end
+
+        records.map { |db_record| rebuild_entity(db_record) }.compact
       end
 
-      # hot fix, not using journal as category yet
-      def self.count_by_categories(_categories)
-        Database::PaperOrm.count
+
+      def self.count_by_categories(journals, min_date: nil, max_date: nil)
+        journals = Array(journals).map { |j| j.to_s.strip }.reject(&:empty?).uniq
+        ds = Database::PaperOrm.dataset
+      
+        if Database::PaperOrm.columns.include?(:journal) && journals.any?
+          ds = ds.where(journal: journals)
+        end
+      
+        min_t = normalize_time_start(min_date)
+        max_t = normalize_time_end(max_date)
+      
+        ds = ds.where { published >= min_t } if min_t && Database::PaperOrm.columns.include?(:published)
+        ds = ds.where { published <= max_t } if max_t && Database::PaperOrm.columns.include?(:published)
+      
+        ds.count
       end
+      
 
       def self.rebuild_entity(db_record)
         return nil unless db_record
@@ -48,6 +94,7 @@ module AcaRadar
         paper_entity.instance_variable_set(:@title, db_record.title)
         paper_entity.instance_variable_set(:@published, db_record.published)
         paper_entity.instance_variable_set(:@links, deserialize_links(db_record.links))
+        paper_entity.instance_variable_set(:@journal, db_record[:journal]) if db_record.values.key?(:journal)
 
         raw_authors =
           if db_record.values.key?(:authors) && db_record[:authors]
@@ -175,6 +222,45 @@ module AcaRadar
           two_dim_embedding: JSON.generate(Array(two_dim))
         )
       end
+
+      def self.normalize_time_start(val)
+        return nil if val.nil? || val == :invalid
+      
+        t =
+          case val
+          when Date
+            Time.utc(val.year, val.month, val.day, 0, 0, 0)
+          when Time
+            Time.utc(val.year, val.month, val.day, 0, 0, 0)
+          else
+            # accept "YYYY-MM-DD" or ISO8601
+            Time.parse(val.to_s)
+          end
+      
+        Time.utc(t.year, t.month, t.day, 0, 0, 0)
+      rescue StandardError
+        nil
+      end
+      private_class_method :normalize_time_start
+      
+      def self.normalize_time_end(val)
+        return nil if val.nil? || val == :invalid
+      
+        t =
+          case val
+          when Date
+            Time.utc(val.year, val.month, val.day, 23, 59, 59)
+          when Time
+            Time.utc(val.year, val.month, val.day, 23, 59, 59)
+          else
+            Time.parse(val.to_s)
+          end
+      
+        Time.utc(t.year, t.month, t.day, 23, 59, 59)
+      rescue StandardError
+        nil
+      end
+      private_class_method :normalize_time_end      
     end
   end
 end

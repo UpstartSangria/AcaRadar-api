@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../../application/services/calculate_similarity'
 require 'roar/decorator'
 require 'roar/json'
 
@@ -61,15 +60,12 @@ module AcaRadar
         }
       end
 
-      def similarity_score(options = {})
-        user_vector = options[:user_vector_2d]
-        return nil unless user_vector || represented.embedding_2d.nil?
-
-        Service::CalculateSimilarity.score(
-          user_vector,
-          represented.embedding_2d
-        )&.round(4)
-      end
+      def similarity_score(*)
+        s = represented.respond_to?(:similarity_score) ? represented.similarity_score : nil
+        return nil if s.nil?
+      
+        s.to_f.round(4)
+      end      
     end
   end
 end

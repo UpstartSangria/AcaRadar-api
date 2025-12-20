@@ -13,7 +13,8 @@ module AcaRadar
       # If whitelist_security is enabled globally, ONLY allowed columns can be mass-assigned.
       # Ensure all columns you pass in Repository::ResearchInterestJob are allowed.
       if respond_to?(:set_allowed_columns)
-        set_allowed_columns :job_id, :term, :status, :error_message, :vector_x, :vector_y
+        set_allowed_columns :job_id, :term, :status, :error_message, :vector_x, :vector_y,
+                    :embedding_b64, :embedding_dim, :created_at, :updated_at
       end
     end
   end

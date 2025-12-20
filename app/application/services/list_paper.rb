@@ -12,33 +12,39 @@ module AcaRadar
       include Dry::Monads::Result::Mixin
 
       PER_PAGE  = 10
-      MAX_FETCH = 10_000
+      MAX_FETCH = 250
+      MAX_TOP_N = 50
 
-      # --- Public API ---------------------------------------------------------
-      def call(journals:, page:, research_embedding: nil)
+      # If top_n is provided (>0), returns top_n closest papers (no paging).
+      # Otherwise returns a normal paged slice (PER_PAGE) from the sorted list.
+      def call(journals:, page:, research_embedding: nil, top_n: nil, min_date: nil, max_date: nil)
         page     = [page.to_i, 1].max
         per_page = PER_PAGE
 
-        # ---- Debug: inputs ---------------------------------------------------
+        top_n_i = parse_top_n(top_n)
+
         AcaRadar.logger.debug(
-          "ListPapers: journals=#{journals.inspect} page=#{page} " \
+          "ListPapers: journals=#{journals.inspect} page=#{page} top_n=#{top_n_i.inspect} " \
+          "min_date=#{min_date.inspect} max_date=#{max_date.inspect} " \
           "research_embedding_class=#{research_embedding.class} len=#{research_embedding&.length}"
         )
 
-        # Fetch all papers first so sorting is correct
-        all_papers = AcaRadar::Repository::Paper.find_by_categories(journals, limit: MAX_FETCH, offset: 0)
-        total      = all_papers.length
+        # Fetch candidate papers from DB (filtered by journals and date range)
+        all_papers = AcaRadar::Repository::Paper.find_by_categories(
+          journals,
+          limit: MAX_FETCH,
+          offset: 0,
+          min_date: min_date,
+          max_date: max_date
+        )
+
+        total       = all_papers.length
         total_pages = (total.to_f / per_page).ceil
 
-        # If we have a valid research embedding, compute scores and sort
+        # If we have a valid research embedding, compute scores and sort by similarity desc
         if valid_research_embedding?(research_embedding)
           research = research_embedding.map(&:to_f)
-
-          AcaRadar.logger.debug(
-            "ListPapers: research_embedding stats " \
-            "dims=#{research.length} finite=#{all_finite?(research)} " \
-            "norm=#{vector_norm(research)}"
-          )
+          dim = research.length
 
           computed = 0
           skipped_empty = 0
@@ -46,20 +52,10 @@ module AcaRadar
           skipped_nonfinite = 0
           skipped_zero = 0
 
-          # Collect a few examples for logs (so you can see why things were skipped)
-          skipped_samples = {
-            empty: [],
-            dim: [],
-            nonfinite: [],
-            zero: []
-          }
-
-          dim = research.length
+          skipped_samples = { empty: [], dim: [], nonfinite: [], zero: [] }
 
           all_papers.each do |paper|
             emb = paper.embedding
-
-            # Default to nil unless we can compute it
             paper.similarity_score = nil
 
             unless emb.is_a?(Array) && !emb.empty?
@@ -75,7 +71,6 @@ module AcaRadar
             end
 
             emb_f = emb.map(&:to_f)
-
             unless all_finite?(emb_f)
               skipped_nonfinite += 1
               skipped_samples[:nonfinite] << paper.title if skipped_samples[:nonfinite].length < 3
@@ -89,12 +84,9 @@ module AcaRadar
             end
 
             score = AcaRadar::Service::CalculateSimilarity.score(research, emb_f)
-
-            # Guard against weird numeric output
             if score.nil? || !score.finite?
               skipped_nonfinite += 1
               skipped_samples[:nonfinite] << "#{paper.title} (score=#{score.inspect})" if skipped_samples[:nonfinite].length < 3
-              paper.similarity_score = nil
               next
             end
 
@@ -102,66 +94,74 @@ module AcaRadar
             computed += 1
           end
 
-          # Sort descending by computed similarity (nil scores sink to bottom)
           all_papers.sort_by! { |p| -(p.similarity_score || -1.0) }
 
-          # ---- Debug: scoring summary ----------------------------------------
-          scores = all_papers.map(&:similarity_score).compact
-          min_s  = scores.min
-          max_s  = scores.max
-          mean_s = scores.empty? ? nil : (scores.sum / scores.length.to_f)
-
           top5 = all_papers.first(5).map { |p| [p.title, p.similarity_score] }
-
           AcaRadar.logger.debug(
             "ListPapers: similarity computed=#{computed}/#{total} " \
             "skipped_empty=#{skipped_empty} skipped_dim=#{skipped_dim} " \
-            "skipped_nonfinite=#{skipped_nonfinite} skipped_zero=#{skipped_zero} " \
-            "score_min=#{min_s} score_max=#{max_s} score_mean=#{mean_s}"
+            "skipped_nonfinite=#{skipped_nonfinite} skipped_zero=#{skipped_zero}"
           )
           AcaRadar.logger.debug("ListPapers: Top 5 scores: #{top5.inspect}")
-
           if skipped_empty.positive? || skipped_dim.positive? || skipped_nonfinite.positive? || skipped_zero.positive?
-            AcaRadar.logger.debug(
-              "ListPapers: skipped samples " \
-              "empty=#{skipped_samples[:empty].inspect} " \
-              "dim=#{skipped_samples[:dim].inspect} " \
-              "nonfinite=#{skipped_samples[:nonfinite].inspect} " \
-              "zero=#{skipped_samples[:zero].inspect}"
-            )
+            AcaRadar.logger.debug("ListPapers: skipped samples #{skipped_samples.inspect}")
           end
         else
-          AcaRadar.logger.debug(
-            "ListPapers: no usable research embedding; returning unsorted page " \
-            "(class=#{research_embedding.class} len=#{research_embedding&.length})"
-          )
-          # Ensure similarity_score is nil so representer renders null cleanly
+          AcaRadar.logger.debug("ListPapers: no usable research embedding; similarity_score will be nil")
           all_papers.each { |p| p.similarity_score = nil if p.respond_to?(:similarity_score=) }
         end
 
-        offset = (page - 1) * per_page
-        papers = all_papers.slice(offset, per_page) || []
+        papers, pagination =
+          if top_n_i
+            [
+              all_papers.first(top_n_i) || [],
+              {
+                mode: 'top_n',
+                top_n: top_n_i,
+                current: 1,
+                total_pages: 1,
+                total_count: total,
+                prev_page: nil,
+                next_page: nil
+              }
+            ]
+          else
+            offset = (page - 1) * per_page
+            [
+              all_papers.slice(offset, per_page) || [],
+              {
+                mode: 'paged',
+                current: page,
+                total_pages: total_pages,
+                total_count: total,
+                prev_page: page > 1 ? page - 1 : nil,
+                next_page: page < total_pages ? page + 1 : nil
+              }
+            ]
+          end
 
-        result_obj = OpenStruct.new(
-          papers: papers,
-          pagination: {
-            current: page,
-            total_pages: total_pages,
-            total_count: total,
-            prev_page: page > 1 ? page - 1 : nil,
-            next_page: page < total_pages ? page + 1 : nil
-          }
-        )
-
-        Success(result_obj)
+        Success(OpenStruct.new(papers: papers, pagination: pagination))
       rescue StandardError => e
         AcaRadar.logger.error(
-          "Service::ListPapers failed: #{e.class} - #{e.message}\n#{e.backtrace&.first(10)&.join("\n")}"
+          "Service::ListPapers failed: #{e.class} - #{e.message}\n#{e.backtrace&.first(12)&.join("\n")}"
         )
         Failure(e)
       end
 
-      # --- Helpers ------------------------------------------------------------
+      private
+
+      def parse_top_n(raw)
+        return nil if raw.nil?
+
+        s = raw.to_s.strip
+        return nil if s.empty?
+        return nil unless s.match?(/\A[1-9]\d*\z/)
+
+        n = s.to_i
+        n = [n, MAX_TOP_N].min
+        n
+      end
+
       def valid_research_embedding?(vec)
         vec.is_a?(Array) &&
           !vec.empty? &&
@@ -183,7 +183,6 @@ module AcaRadar
       end
 
       def vector_norm(arr)
-        # sqrt(sum(x^2))
         sum_sq = 0.0
         arr.each do |v|
           f = v.to_f
