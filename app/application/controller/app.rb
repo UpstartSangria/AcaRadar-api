@@ -57,15 +57,6 @@ module AcaRadar
           
             # If the service returned a cached completed job, respond immediately as "completed"
             if job && job.status == 'completed'
-              Thread.new do
-                # We use the same job_id so the frontend listens to the correct channel
-                Service::EmbedResearchInterest.new.call(
-                  term: request_obj.term, 
-                  request_id: job_id
-                )
-              rescue StandardError => e
-                AcaRadar.logger.error("Publisher thread error: #{e.message}")
-              end
               session[:research_interest_request_id] = job_id
               session[:research_interest_term]       = job.term
               session[:research_interest_2d]         = [job.vector_x.to_f, job.vector_y.to_f]
@@ -97,11 +88,19 @@ module AcaRadar
                 percent: 100,
                 message: 'Cached'
               }
-          
               standard_response(:ok, 'Research interest already embedded', data)
             end
           
             # Not completed -> treat as queued/processing
+            Thread.new do
+              Service::EmbedResearchInterest.new.call(
+                term: request_obj.term, 
+                request_id: job_id
+              )
+            rescue StandardError => e
+              AcaRadar.logger.error("Publisher thread error: #{e.message}")
+            end
+
             session[:research_interest_request_id] = job_id
             session[:research_interest_term]       = request_obj.term
             session.delete(:research_interest_2d)
