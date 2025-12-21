@@ -14,12 +14,12 @@ module AcaRadar
       def call(term:, request_id:)
         publisher = Messaging::Publisher.new(AcaRadar::App.config, request_id.to_s)
         publisher.publish(status: 'processing', message: 'Extracting concepts', percent: 35)
-        sleep(3)
+        sleep(1)
         concepts = Entity::Concept.extract_from(term)
         return Failure('No concepts extracted from research interest') if concepts.empty?
 
         publisher.publish(status: 'processing', message: 'Extracting concepts', percent: 40)
-        sleep(2)
+        sleep(1)
 
         concepts_array = concepts.map(&:to_s) #array of concepts
         concept_text = concepts.map(&:to_s).join(', ')
@@ -28,7 +28,7 @@ module AcaRadar
 
         two_dim_embedding = Value::TwoDimEmbedding.reduce_dimension_from(embedding.full_embedding)
         publisher.publish(status: 'processing', message: 'Reducing embeddings', percent: 75)
-        sleep(2)
+        sleep(1)
         publisher.publish(
           status: 'complete',
           message: 'Analysis done',
