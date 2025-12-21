@@ -42,12 +42,15 @@ module AcaRadar
           # fast response; heavy work happens in Shoryuken worker.
           routing.post do
             request_obj = Request::EmbedResearchInterest.new(routing.params)
+<<<<<<< HEAD
             standard_response(:bad_request, 'Research interest must be a non-empty string') unless request_obj.valid?
 
+<<<<<<< HEAD
             # Single entrypoint for caching/idempotency/queueing
             result = Service::QueueResearchInterestEmbedding.new.call(term: request_obj.term)
             standard_response(:internal_error, 'Failed to queue embedding job') if result.failure?
           
+<<<<<<< HEAD
             job_id = result.value!
             job    = Repository::ResearchInterestJob.find(job_id)
             
@@ -56,14 +59,16 @@ module AcaRadar
               session[:research_interest_request_id] = job_id
               session[:research_interest_term]       = job.term
               session[:research_interest_2d]         = [job.vector_x.to_f, job.vector_y.to_f]
-
-            job_id = result.value!
+=======
+            # job_id = result.value!
             job    = Repository::ResearchInterestJob.find(job_id)
-
-            if job && job.status == 'completed'
-              session[:research_interest_request_id] = job_id
-              session[:research_interest_term]       = job.term
-              session[:research_interest_2d]         = [job.vector_x.to_f, job.vector_y.to_f]
+            
+            # If the service returned a cached completed job, respond immediately as "completed"
+            # if job && job.status == 'completed'
+            #   session[:research_interest_request_id] = job_id
+            #   session[:research_interest_term]       = job.term
+            #   session[:research_interest_2d]         = [job.vector_x.to_f, job.vector_y.to_f]
+>>>>>>> 19d5913 (uncomment job)
           
               if job.respond_to?(:embedding_b64) && job.embedding_b64 && !job.embedding_b64.to_s.empty?
                 session[:research_interest_embedding_b64] = job.embedding_b64
@@ -97,7 +102,9 @@ module AcaRadar
           
             # Not completed -> treat as queued/processing
             job_id = SecureRandom.uuid
+=======
             request_id = [request_obj, Time.now.to_f].hash.to_s
+>>>>>>> 0511135 (fix routing hopefully)
 
             Thread.new do
               Service::EmbedResearchInterest.new.call(
@@ -107,10 +114,12 @@ module AcaRadar
             rescue StandardError => e
               APP_LOGGER.error "BACKGROUND_JOB_ERROR: #{e.message}"
               APP_LOGGER.error e.backtrace.join("\n")
+=======
           
             unless request_obj.valid?
               data = { error_code: request_obj.error_code, error: request_obj.error_message }
               standard_response(:bad_request, request_obj.error_message, data)
+>>>>>>> 7f2912e (back to square 1)
             end
           
             # Single entrypoint for caching/idempotency/queueing
