@@ -11,3 +11,4 @@ tmp/hf_cache/models--sentence--transformers--all-MiniLM-L6-v2
 spec/fixtures/cassettes/arxiv_api.yml
 .python-version
 *.pyc
+.DS_Store
