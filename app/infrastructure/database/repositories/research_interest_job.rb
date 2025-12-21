@@ -6,10 +6,15 @@ module AcaRadar
       # --- CREATE / FIND ------------------------------------------------------
 
       def self.create(job_id:, term:)
+        # NEW: populate timestamps at creation so diagnostics + lease logic work reliably
+        now = Time.now
+
         Database::ResearchInterestJobOrm.create(
           job_id: job_id,
           term: term,
-          status: 'queued'
+          status: 'queued',
+          created_at: now,  # NEW
+          updated_at: now   # NEW
         )
       end
 
@@ -33,16 +38,25 @@ module AcaRadar
         ds.order(Sequel.desc(:updated_at)).first
       end
 
-      # --- STATUS UPDATES -----------------------------------------------------
+      # lease duration for "processing" state; allows recovery from crashes/restarts.
+      # If a job is stuck in processing beyond this lease, a worker may reclaim it.
+      LEASE_SECONDS = Integer(ENV.fetch('RI_PROCESSING_LEASE_SECONDS', '10')) # NEW
 
       def self.try_mark_processing(job_id)
+        # llow claiming when queued OR when processing lease is stale (crash recovery)
+        now = Time.now  # NEW
+        cutoff = now - LEASE_SECONDS # NEW
+
         affected = Database::ResearchInterestJobOrm
-          .where(job_id: job_id, status: 'queued')
-          .update(status: 'processing', updated_at: Time.now)
-      
+          .where(job_id: job_id)
+          .where do
+            (status =~ 'queued') | ((status =~ 'processing') & (updated_at < cutoff))
+          end
+          .update(status: 'processing', updated_at: now)
+
         affected == 1
       end
-      
+
       def self.mark_processing(job_id)
         update_status(job_id, 'processing')
       end
@@ -86,7 +100,8 @@ module AcaRadar
       def self.update_status(job_id, status)
         orm = find(job_id)
         return unless orm
-        orm.update(status: status)
+
+        orm.update(status: status, updated_at: Time.now) # NEW
       end
     end
   end
