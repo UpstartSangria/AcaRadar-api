@@ -40,11 +40,14 @@ module AcaRadar
         routing.on 'research_interest' do
           # POST /api/v1/research_interest
           # fast response; heavy work happens in Shoryuken worker.
-           routing.post do
+          routing.post do
             request_obj = Request::EmbedResearchInterest.new(routing.params)
-            standard_response(:bad_request, 'Research interest must be a non-empty string') unless request_obj.valid?
+          
+            unless request_obj.valid?
+              data = { error_code: request_obj.error_code, error: request_obj.error_message }
+              standard_response(:bad_request, request_obj.error_message, data)
+            end
 
-<<<<<<< HEAD
             # Single entrypoint for caching/idempotency/queueing
             result = Service::QueueResearchInterestEmbedding.new.call(term: request_obj.term)
             standard_response(:internal_error, 'Failed to queue embedding job') if result.failure?
@@ -101,24 +104,31 @@ module AcaRadar
           
             # Not completed -> treat as queued/processing
             job_id = SecureRandom.uuid
-=======
-            request_id = [request_obj, Time.now.to_f].hash.to_s
->>>>>>> 0511135 (fix routing hopefully)
 
             Thread.new do
               Service::EmbedResearchInterest.new.call(
-                term: request_obj.term,
-                request_id: request_id
+                term: request_obj.term, 
+                request_id: job_id
               )
             rescue StandardError => e
-              APP_LOGGER.error "BACKGROUND_JOB_ERROR: #{e.message}"
-              APP_LOGGER.error e.backtrace.join("\n")
+              AcaRadar.logger.error("Publisher thread error: #{e.message}")
             end
 
+            session[:research_interest_request_id] = job_id
+            session[:research_interest_term]       = request_obj.term
+            session.delete(:research_interest_2d)
+            session.delete(:research_interest_embedding_b64)
+          
+            AcaRadar.logger.debug("RI queued job_id=#{job_id} term=#{request_obj.term.inspect}")
+          
             data = {
-              message: 'Processing started',
-              request_id: request_id
+              message: 'Queued',
+              percent: 1, 
+              request_id: job_id,
+              status: (job&.status || 'queued'),
+              status_url: "/api/v1/research_interest/#{job_id}"
             }
+          
             standard_response(:processing, 'Research interest processing started', data)
           end
           
