@@ -47,14 +47,14 @@ module AcaRadar
               data = { error_code: request_obj.error_code, error: request_obj.error_message }
               standard_response(:bad_request, request_obj.error_message, data)
             end
-
+          
             # Single entrypoint for caching/idempotency/queueing
             result = Service::QueueResearchInterestEmbedding.new.call(term: request_obj.term)
             standard_response(:internal_error, 'Failed to queue embedding job') if result.failure?
           
             job_id = result.value!
             job    = Repository::ResearchInterestJob.find(job_id)
-            
+          
             # If the service returned a cached completed job, respond immediately as "completed"
             if job && job.status == 'completed'
               session[:research_interest_request_id] = job_id
@@ -92,8 +92,6 @@ module AcaRadar
             end
           
             # Not completed -> treat as queued/processing
-            job_id = SecureRandom.uuid
-            
             Thread.new do
               Service::EmbedResearchInterest.new.call(
                 term: request_obj.term, 
